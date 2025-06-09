@@ -2,6 +2,18 @@
 
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
+# Usage
+```julia
+julia> integrate(a*x,x)
+(1//2)*a*(x^2)
+
+julia> integrate(a^3)
+(1//4)*(a^4)
+```
+first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression.
+
+
+
 # Testing
 
 There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only the first two in julia.
