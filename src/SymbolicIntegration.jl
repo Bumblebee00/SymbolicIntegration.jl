@@ -9,6 +9,45 @@ export integrate
 
 const DEBUGINFO=true
 
+# # Function to recursively find all .jl files in a directory
+# function find_rule_files(dir)
+#     files = String[]
+#     for (root, dirs, filenames) in walkdir(dir)
+#         for filename in filenames
+#             if endswith(filename, ".jl")
+#                 push!(files, joinpath(root, filename))
+#             end
+#         end
+#     end
+#     return files
+# end
+
+# Function to load rules from a file
+function load_rules_from_file(file)
+    # Each rule file should define a 'rules' array of quoted expressions
+    include(file)
+    # Evaluate each quoted expression to get the actual rule
+    return [eval(rule) for rule in file_rules]
+end
+
+# Load all rules from the IntegrationRules directory
+function load_all_rules()
+    file1 = joinpath(@__DIR__, "IntegrationRules/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.1 (a+b x)^m.jl")
+    file2 = joinpath(@__DIR__, "IntegrationRules/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl")
+    rules_paths = [ file1,]
+
+    all_rules = []
+    for file in rules_paths
+        file_rules = load_rules_from_file(file)
+        append!(all_rules, file_rules)
+    end
+    
+    return all_rules
+end
+
+# Load all rules at module initialization
+const rules = load_all_rules()
+
 function contains_int_var(var,node)
     if node === var
         return true
@@ -29,23 +68,6 @@ function contains_int_var(var,args...)
     return all(contains_int_var(var,arg) for arg in args)
 end
 
-# Load rules from files
-# file1 = joinpath(@__DIR__, "IntegrationRules/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.1 (a+b x)^m.jl")
-# rules_paths = [ file1, ]
-# ...
-rule0_4 = @rule ∫(+(~~a),~v) => sum(map(x-> ∫(x,~v), ~a))
-rule0_12 = @rule ∫(~a * ~b,~v) => !contains_int_var(~v,~a) ? ~a*∫(~b,~v) : nothing
-rule0_8 = @rule ∫(~a, ~v) => !contains_int_var(~v,~a) ? (~a)*(~v) : nothing
-rule1_1_1_1_1_1 = @rule ∫(1/(~v),~v) => log(~v)
-rule1_1_1_1_1_2 = @rule ∫((~v)^(~!m),~v) => !contains_int_var(~v,~m) ? (1//((~m)+1)) * (~v)^((~m)+1) : nothing
-
-rules = [
-    rule0_4,
-    rule0_12,
-    rule0_8,
-    rule1_1_1_1_1_1,
-    rule1_1_1_1_1_2,
-]
 
 function apply_rule(integrand)
     result = nothing
@@ -80,8 +102,12 @@ end
 # previous rules, in case a rule transforms the integral in another integral
 # (for example linearity rules). 
 function integrate(integrand, int_var)
-    conditional = IfElse(shouldtransform, apply_rule, Empty())
-    return Prewalk(conditional)(∫(integrand,int_var))
+    rules2 = load_all_rules()
+    for r in rules2
+        println("Rule: ", r)
+    end
+    # conditional = IfElse(shouldtransform, apply_rule, Empty())
+    # return Prewalk(conditional)(∫(integrand,int_var))
 end
 
 # If no integration variable provided
