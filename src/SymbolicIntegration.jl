@@ -22,23 +22,16 @@ const DEBUGINFO=true
 #     return files
 # end
 
-# Function to load rules from a file
-function load_rules_from_file(file)
-    # Each rule file should define a 'rules' array of quoted expressions
-    include(file)
-    # Evaluate each quoted expression to get the actual rule
-    return [eval(rule) for rule in file_rules]
-end
-
 # Load all rules from the IntegrationRules directory
 function load_all_rules()
+    # rules_paths = find_rules_files(joinpath(@__DIR__, "IntegrationRules")) TODO
     file1 = joinpath(@__DIR__, "IntegrationRules/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.1 (a+b x)^m.jl")
     file2 = joinpath(@__DIR__, "IntegrationRules/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl")
     rules_paths = [ file1,]
 
     all_rules = []
     for file in rules_paths
-        file_rules = load_rules_from_file(file)
+        include(file)
         append!(all_rules, file_rules)
     end
     
@@ -102,12 +95,8 @@ end
 # previous rules, in case a rule transforms the integral in another integral
 # (for example linearity rules). 
 function integrate(integrand, int_var)
-    rules2 = load_all_rules()
-    for r in rules2
-        println("Rule: ", r)
-    end
-    # conditional = IfElse(shouldtransform, apply_rule, Empty())
-    # return Prewalk(conditional)(∫(integrand,int_var))
+    conditional = IfElse(shouldtransform, apply_rule, Empty())
+    return Prewalk(conditional)(∫(integrand,int_var))
 end
 
 # If no integration variable provided
@@ -123,6 +112,11 @@ function integrate(integrand)
     end
 
     integrate(integrand, integration_variable)
+end
+
+function integrate()
+    @warn "No integrand provided. Please provide one like this: `integrate(x^2 + 3x + 2, x)`"
+    return nothing
 end
 
 end
