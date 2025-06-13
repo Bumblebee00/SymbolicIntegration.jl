@@ -3,12 +3,37 @@
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 # Usage
-```julia
+```
 julia> integrate(a*x,x)
 (1//2)*a*(x^2)
 
 julia> integrate(a^3)
 (1//4)*(a^4)
+
+julia> integrate(x+1/x;verbose=true)
+Checking node ∫(x + 1 / x, x)... is a tree and is a ∫
+┌---Applied rule 11:
+| ∫(+(~(~a)), ~x) => sum(map((f->begin
+|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/IntegrationRules/9 Miscellaneous/9.1 Integrand simplification rules.jl:16 =#
+|                     ∫(f, ~x)
+|                 end), ~a))
+└---with result: ∫(x, x) + ∫(1 / x, x)
+Checking node ∫(x, x)... is a tree and is a ∫
+┌---Applied rule 22:
+| ∫((~x) ^ ~(!m), ~x) => if !(contains_var(~x, ~m)) && !(eqQ(~m, -1))
+|         (~x) ^ (~m + 1) / (~m + 1)
+|     else
+|         nothing
+|     end
+└---with result: (1//2)*(x^2)
+Checking node 1//2... is not a tree, skipping branch.
+Checking node x^2... is a tree but not a ∫, skipping branch.
+Checking node ∫(1 / x, x)... is a tree and is a ∫
+┌---Applied rule 21:
+| ∫(1 / ~x, ~x) => log(~x)
+└---with result: log(x)
+Checking node x... is not a tree, skipping branch.
+log(x) + (1//2)*(x^2)
 ```
 first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression.
 
