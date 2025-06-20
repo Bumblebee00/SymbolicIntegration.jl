@@ -3,7 +3,7 @@ module SymbolicIntegration
 using Symbolics
 using SymbolicUtils.Rewriters
 
-@syms ∫(x,y)
+@syms ∫(var1,var2)
 
 export integrate, reload_rules #TODO reload rules i just for debug
 
