@@ -41,7 +41,10 @@ first argument is the expression to integrate, second argument is the variable o
 
 # Testing
 
-There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only the first two in julia.
+There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only some of them in julia. To run them, execute:
+```
+julia --project=. test/runtests.jl
+```
 
 ## Testing other packages
 These test can be used to test the package, but also other packages in order to compare them.
