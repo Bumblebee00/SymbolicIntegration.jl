@@ -4,36 +4,41 @@
 
 # Usage
 ```
-julia> integrate(a*x,x)
-(1//2)*a*(x^2)
+(@v1.11) pkg> activate .
+  Activating project at `~/.julia/dev/SymbolicIntegration.jl`
 
-julia> integrate(a^3)
-(1//4)*(a^4)
+julia> using Symbolics, SymbolicIntegration
+Precompiling SymbolicIntegration...
+  1 dependency successfully precompiled in 11 seconds. 150 already precompiled.
 
-julia> integrate(x+1/x;verbose=true)
-Checking node ∫(x + 1 / x, x)... is a tree and is a ∫
-┌---Applied rule 11:
+julia> @variables x
+1-element Vector{Num}:
+ x
+
+julia> integrate(x^2 + 1/x;verbose=true)
+Checking node ∫(1 / x + x^2, x)...Is a tree with ∫ operation, applying rules
+┌---Applied rule 9_1_0:
 | ∫(+(~(~a)), ~x) => sum(map((f->begin
-|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/IntegrationRules/9 Miscellaneous/9.1 Integrand simplification rules.jl:16 =#
+|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/IntegrationRules/9 Miscellaneous/9.1 Integrand simplification rules.jl:5 =#
 |                     ∫(f, ~x)
 |                 end), ~a))
-└---with result: ∫(x, x) + ∫(1 / x, x)
-Checking node ∫(x, x)... is a tree and is a ∫
-┌---Applied rule 22:
+└---with result: ∫(x^2, x) + ∫(1 / x, x)
+Checking node ∫(x^2, x)...Is a tree with ∫ operation, applying rules
+┌---Applied rule 1_1_1_1_2:
 | ∫((~x) ^ ~(!m), ~x) => if !(contains_var(~x, ~m)) && !(eqQ(~m, -1))
 |         (~x) ^ (~m + 1) / (~m + 1)
 |     else
 |         nothing
 |     end
-└---with result: (1//2)*(x^2)
-Checking node 1//2... is not a tree, skipping branch.
-Checking node x^2... is a tree but not a ∫, skipping branch.
-Checking node ∫(1 / x, x)... is a tree and is a ∫
-┌---Applied rule 21:
+└---with result: (1//3)*(x^3)
+Checking node 1//3... is not a tree, skipping branch.
+Checking node x^3... is a tree but not a ∫, skipping branch.
+Checking node ∫(1 / x, x)...Is a tree with ∫ operation, applying rules
+┌---Applied rule 1_1_1_1_1:
 | ∫(1 / ~x, ~x) => log(~x)
 └---with result: log(x)
 Checking node x... is not a tree, skipping branch.
-log(x) + (1//2)*(x^2)
+log(x) + (1//3)*(x^3)
 ```
 first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression.
 
