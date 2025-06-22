@@ -51,7 +51,7 @@ for path in testset_paths
             elapsed_time = @elapsed computed_result = integrate(test.integrand, test.integration_var;verbose = verbs)# agginugere symbolic = true?
             push!(times, elapsed_time)
             
-            if isequal(simplify(computed_result  - test.result), 0)# also check computed_result[2]=0?
+            if isequal(simplify(computed_result  - test.result;expand=true), 0)
                 printstyled("[ ok ]∫( ", test.integrand, " )d", test.integration_var, " = ", test.result, " (", round(elapsed_time, digits=4), "s)\n"; color = :green)
             else
                 printstyled("[fail]∫( ", test.integrand, " )d", test.integration_var, " = ", test.result, " but got ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :red)
