@@ -11,9 +11,16 @@ julia> using Symbolics, SymbolicIntegration
 Precompiling SymbolicIntegration...
   1 dependency successfully precompiled in 11 seconds. 150 already precompiled.
 
-julia> @variables x
-1-element Vector{Num}:
+julia> @variables x a
+2-element Vector{Num}:
  x
+ a
+
+julia> integrate(a^2)
+(1//3)*(a^3)
+
+julia> integrate(a^2, x)
+(a^2)*x
 
 julia> integrate(x^2 + 1/x;verbose=true)
 Checking node ∫(1 / x + x^2, x)...Is a tree with ∫ operation, applying rules
@@ -40,9 +47,19 @@ Checking node ∫(1 / x, x)...Is a tree with ∫ operation, applying rules
 Checking node x... is not a tree, skipping branch.
 log(x) + (1//3)*(x^3)
 ```
-first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression.
+first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them.
 
+In this development phase there is also a function `reload_rules` (to be called optionally with verbose=true) to reload the rules, because using Revise is not enough.
 
+# How it works internally
+This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica [RUBI package](https://rulebasedintegration.org/). The rules are definied using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
+```julia
+# rule 1_1_1_1_2
+@smrule ∫((~x)^(~!m),(~x)) => !contains_var((~x), (~m)) && !eqQ((~m), -1) ? (~x)^((~m) + 1)/((~m) + 1) : nothing
+```
+The rule left hand side pattern is the symbolic function `∫(var1, var2)` where first variable is the integrand and second is the integration variable. After the => there are some conditions to determine if the rules are applicable, and after the ? there is the transformation. Note that this may still contain a integral, so a walk in pre order of the tree representing the symbolic expression is done, applying rules to each node containg the integral.
+
+For now there are just a few rules, I am each day translating more of them. If you enconunter any issues using the package, please write me or open a issue on the repo.
 
 # Testing
 
