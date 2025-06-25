@@ -23,28 +23,33 @@ julia> integrate(a^2, x)
 (a^2)*x
 
 julia> integrate(x^2 + 1/x;verbose=true)
-Checking node ∫(1 / x + x^2, x)...Is a tree with ∫ operation, applying rules
-┌---Applied rule 9_1_0:
+Checking ∫(1 / x + x^2, x)...
+┌---Applied rule 9_1_0 on ∫(1 / x + x^2, x)
 | ∫(+(~(~a)), ~x) => sum(map((f->begin
-|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/IntegrationRules/9 Miscellaneous/9.1 Integrand simplification rules.jl:5 =#
+|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/IntegrationRules/9 Miscellaneous/9.1 Integrand simplification rules.jl:6 =#
 |                     ∫(f, ~x)
 |                 end), ~a))
 └---with result: ∫(x^2, x) + ∫(1 / x, x)
-Checking node ∫(x^2, x)...Is a tree with ∫ operation, applying rules
-┌---Applied rule 1_1_1_1_2:
+Checking ∫(x^2, x) + ∫(1 / x, x)...
+Checking ∫(x^2, x)...
+┌---Applied rule 1_1_1_1_2 on ∫(x^2, x)
 | ∫((~x) ^ ~(!m), ~x) => if !(contains_var(~x, ~m)) && !(eqQ(~m, -1))
-|         (~x) ^ (~m + 1) / (~m + 1)
+|         (~x) ^ (~m + 1) ⨸ (~m + 1)
 |     else
 |         nothing
 |     end
 └---with result: (1//3)*(x^3)
-Checking node 1//3... is not a tree, skipping branch.
-Checking node x^3... is a tree but not a ∫, skipping branch.
-Checking node ∫(1 / x, x)...Is a tree with ∫ operation, applying rules
-┌---Applied rule 1_1_1_1_1:
+Checking (1//3)*(x^3)...
+Checking 1//3...
+Checking x^3...
+Checking x...
+Checking 3...
+Checking ∫(1 / x, x)...
+┌---Applied rule 1_1_1_1_1 on ∫(1 / x, x)
 | ∫(1 / ~x, ~x) => log(~x)
 └---with result: log(x)
-Checking node x... is not a tree, skipping branch.
+Checking log(x)...
+Checking x...
 log(x) + (1//3)*(x^3)
 ```
 first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them.
