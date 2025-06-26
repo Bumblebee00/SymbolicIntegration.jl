@@ -55,7 +55,7 @@ for path in testset_paths
             if isequal(simplify(computed_result  - test.result;expand=true), 0)
                 printstyled("[ ok ]∫( ", test.integrand, " )d", test.integration_var, " = ", test.result, " (", round(elapsed_time, digits=4), "s)\n"; color = :green)
             else
-                printstyled("[fail]∫( ", test.integrand, " )d", test.integration_var, " = ", test.result, " but got ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :red)
+                printstyled("[fail]∫( ", test.integrand, " )d", test.integration_var, " = ", test.result, " but got:\n      ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :red)
                 testfile_failed += 1
             end
         catch exceptionz
