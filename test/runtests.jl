@@ -48,6 +48,7 @@ for path in testset_paths
     
     for (i, test) in enumerate(data)
         try
+            # TODO why this time is not the same as the waiting time on terminal
             elapsed_time = @elapsed computed_result = integrate(test.integrand, test.integration_var;verbose = verbs)# agginugere symbolic = true?
             push!(times, elapsed_time)
             
