@@ -60,7 +60,7 @@ In this development phase there is also a function `reload_rules` (to be called 
 This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica [RUBI package](https://rulebasedintegration.org/). The rules are definied using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
 ```julia
 # rule 1_1_1_1_2
-@smrule ∫((~x)^(~!m),(~x)) => !contains_var((~x), (~m)) && !eqQ((~m), -1) ? (~x)^((~m) + 1)⨸((~m) + 1) : nothing
+@rule ∫((~x)^(~!m),(~x)) => !contains_var((~x), (~m)) && !eqQ((~m), -1) ? (~x)^((~m) + 1)⨸((~m) + 1) : nothing
 ```
 The rule left hand side pattern is the symbolic function `∫(var1, var2)` where first variable is the integrand and second is the integration variable. After the => there are some conditions to determine if the rules are applicable, and after the ? there is the transformation. Note that this may still contain a integral, so a walk in pre order of the tree representing the symbolic expression is done, applying rules to each node containg the integral.
 
@@ -71,13 +71,13 @@ For now there are just a few rules, I am each day translating more of them. If y
 # Problems
 ## Serious
 Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountred so far:
-- pattern matching with negative powers. If I define a rule with this pattern `@smrule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression.
+- pattern matching with negative powers. If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression.
 - Number of rules. there are a lot of rules and translating them is really slow
 
 ## Mild
 Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
 - some rules have the integral inside a function call (like substitute) with integral to be executed before the function call.
-- one rule can have more than one match. for example `@smrule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` can match `(1+2x)^2 * (3+4x)^3` with both m=2, n=3, ... or m=3, n=2, ... . Only one match of the possible ones is returned. but a usual rule form rubi is @smrule pattern => if (conditions...) result else nothing. So first the pattern is found, but then if it doesnt match the conditions the rule returns nothing. But maybe one of the other possible matches matched the condition and the rule would have been applied. Mathematica does this:
+- one rule can have more than one match. for example `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` can match `(1+2x)^2 * (3+4x)^3` with both m=2, n=3, ... or m=3, n=2, ... . Only one match of the possible ones is returned. but a usual rule form rubi is @rule pattern => if (conditions...) result else nothing. So first the pattern is found, but then if it doesnt match the conditions the rule returns nothing. But maybe one of the other possible matches matched the condition and the rule would have been applied. Mathematica does this:
 ```
 A[(x_^m_) (y_^n_)] := m
 B[(x_^m_) (y_^n_)] := m /; EvenQ[m]
