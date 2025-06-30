@@ -68,6 +68,34 @@ The infix operator `⨸` is used to represent a custom division function, if cal
 
 For now there are just a few rules, I am each day translating more of them. If you enconunter any issues using the package, please write me or open a issue on the repo.
 
+# Problems
+## Serious
+Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountred so far:
+- pattern matching with negative powers. If I define a rule with this pattern `@smrule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression.
+- Number of rules. there are a lot of rules and translating them is really slow
+
+## Mild
+Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
+- some rules have the integral inside a function call (like substitute) with integral to be executed before the function call.
+- one rule can have more than one match. for example `@smrule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` can match `(1+2x)^2 * (3+4x)^3` with both m=2, n=3, ... or m=3, n=2, ... . Only one match of the possible ones is returned. but a usual rule form rubi is @smrule pattern => if (conditions...) result else nothing. So first the pattern is found, but then if it doesnt match the conditions the rule returns nothing. But maybe one of the other possible matches matched the condition and the rule would have been applied. Mathematica does this:
+```
+A[(x_^m_) (y_^n_)] := m
+B[(x_^m_) (y_^n_)] := m /; EvenQ[m]
+
+In[20]:= A[x^3 y^2]
+
+Out[20]= 3
+
+In[21]:= B[x^3 y^2]
+
+Out[21]= 2
+```
+i have not yet found a case in which this problem causes a integration to fail, therfore i put it here in mild section
+
+## Minor
+- in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
+
+
 # Testing
 
 There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only some of them in julia. To run them, execute:
