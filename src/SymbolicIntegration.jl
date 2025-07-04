@@ -11,6 +11,12 @@ using Elliptic # TODO transform this to a pakage extension
 @register_symbolic Elliptic.E(phi, m)
 @register_symbolic Elliptic.F(phi, m)
 
+using HypergeometricFunctions # TODO transform this to a pakage extension
+
+@register_symbolic HypergeometricFunctions._₂F₁(a, b, c, z)
+
+@register_symbolic appell_f1(a, b, c, d, e, z)
+
 export integrate, reload_rules #TODO reload rules is just for debugging
 
 include("rules_loader.jl")
