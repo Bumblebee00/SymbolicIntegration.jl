@@ -1,6 +1,8 @@
 using Test
 using Symbolics
 using SymbolicIntegration
+using Elliptic # TODO how can we not import this two?
+using HypergeometricFunctions 
 
 # Parse command line arguments
 verbs = false  # default value
