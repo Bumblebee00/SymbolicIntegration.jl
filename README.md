@@ -1,3 +1,15 @@
+- [Usage](#usage)
+- [How it works internally](#how-it-works-internally)
+- [Problems](#problems)
+  - [Serious](#serious)
+  - [Mild](#mild)
+  - [Minor](#minor)
+- [Testing](#testing)
+  - [Testing other packages](#testing-other-packages)
+    - [SymbolicNumericIntegration.jl](#symbolicnumericintegrationjl)
+    - [SymPy.jl](#sympyjl)
+
+
 # SymbolicIntegration
 
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
@@ -91,6 +103,18 @@ In[21]:= B[x^3 y^2]
 Out[21]= 2
 ```
 i have not yet found a case in which this problem causes a integration to fail, therfore i put it here in mild section
+
+- In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. For example:
+```
+ExpandIntegrand[(-1 + 2 x)^2*(3 + 6 x)^(2.1), x]
+4 (3 + 6 x)^2.1 - 4/3 (3 + 6 x)^3.1 + 1/9 (3 + 6 x)^4.1
+```
+that is not the obvious expansion of expanding the square of binomial, that is also what the SymbolicUtils function ``expand`` does
+```
+julia> expand((-1 + 2x)^2 * (3 + 6x)^(2.1))
+(3 + 6x)^2.1 - 4x*((3 + 6x)^2.1) + 4(x^2)*((3 + 6x)^2.1)
+```
+now this can be a problem, but also not, because, even though ``4(x^2)*((3 + 6x)^2.1)`` is more difficult to integrate than ``1/9 (3 + 6 x)^4.1``, the system should be able to integate both. But maybe for some advanced integrals the function `ExpandIntegrand` and it's exact behaviour is needed.
 
 ## Minor
 - in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
