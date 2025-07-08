@@ -17,6 +17,8 @@ using HypergeometricFunctions # TODO transform this to a pakage extension
 
 @register_symbolic appell_f1(a, b, c, d, e, z)
 
+using Polynomials # TODO maybe implement division without this package for speed?
+
 export integrate, reload_rules #TODO reload rules is just for debugging
 
 include("rules_loader.jl")
