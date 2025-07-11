@@ -21,6 +21,10 @@ using Polynomials # TODO maybe implement division without this package for speed
 
 export integrate, reload_rules #TODO reload rules is just for debugging
 
+const use_gamma = false
+
+@register_symbolic SymbolicUtils.expinti(x)
+
 include("rules_loader.jl")
 include("rules_utility_functions.jl")
 include("integration.jl")
