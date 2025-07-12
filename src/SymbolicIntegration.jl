@@ -21,7 +21,7 @@ using Polynomials # TODO maybe implement division without this package for speed
 
 export integrate, reload_rules #TODO reload rules is just for debugging
 
-const use_gamma = false
+const USE_GAMMA = false
 
 @register_symbolic SymbolicUtils.expinti(x)
 
