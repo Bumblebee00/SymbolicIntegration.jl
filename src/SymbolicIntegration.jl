@@ -19,11 +19,16 @@ using HypergeometricFunctions # TODO transform this to a pakage extension
 
 using Polynomials # TODO maybe implement division without this package for speed?
 
-export integrate, reload_rules #TODO reload rules is just for debugging
-
-const USE_GAMMA = false
+export integrate, reload_rules
+ 
+const USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
 
 @register_symbolic SymbolicUtils.expinti(x)
+@register_symbolic SymbolicUtils.expint(nu, z)
+@register_symbolic SymbolicUtils.gamma(x)
+@register_symbolic SymbolicUtils.gamma(x, y)
+@register_symbolic SymbolicUtils.erfi(x)
+@register_symbolic SymbolicUtils.erf(x)
 
 include("rules_loader.jl")
 include("rules_utility_functions.jl")
