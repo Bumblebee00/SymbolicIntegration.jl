@@ -8,7 +8,7 @@ using Symbolics
 using Elliptic # TODO transform this to a pakage extension
 
 @register_symbolic Elliptic.E(m)
-@register_symbolic Elliptic.E(phi, m)
+@register_symbolic Elliptic.E(phi, m) false
 @register_symbolic Elliptic.F(phi, m)
 
 using HypergeometricFunctions # TODO transform this to a pakage extension
