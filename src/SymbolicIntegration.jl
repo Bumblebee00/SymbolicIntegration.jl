@@ -6,16 +6,16 @@ using Symbolics
 @syms ∫(var1,var2) subst(var1, var2, var3)
 
 using Elliptic # TODO transform this to a pakage extension
-
 @register_symbolic Elliptic.E(m)
 @register_symbolic Elliptic.E(phi, m) false
 @register_symbolic Elliptic.F(phi, m)
 
 using HypergeometricFunctions # TODO transform this to a pakage extension
-
 @register_symbolic HypergeometricFunctions._₂F₁(a, b, c, z)
-
 @register_symbolic appell_f1(a, b, c, d, e, z)
+
+using PolyLog # TODO transform this to a pakage extension
+@register_symbolic PolyLog.reli(n, z)
 
 using Polynomials # TODO maybe implement division without this package for speed?
 
