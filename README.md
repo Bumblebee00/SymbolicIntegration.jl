@@ -87,7 +87,7 @@ Not all rules are yet translated, I am each day translating more of them. If you
 # Problems
 ## Serious
 Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountred so far:
-- pattern matching with negative powers. If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression. For this reason `(1 + 3x)^2 / (1 + 2x))` and many other expressions dont get integrated
+- pattern matching with negative powers. If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression. For this reason `(1 + 3x)^2 / (1 + 2x))`, `(x^6) / (1 + 2(x^6))` and many other expressions dont get integrated
 - Number of rules. there are a lot of rules and translating them is really slow
 
 ## Mild
