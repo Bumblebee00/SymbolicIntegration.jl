@@ -5,6 +5,12 @@ using Symbolics
 # subst is just for when integral inside the real subst function is not solved
 @syms ∫(var1,var2) subst(var1, var2, var3)
 
+const USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
+
+@register_symbolic SymbolicUtils.expinti(x)
+@register_symbolic SymbolicUtils.expint(nu, z)
+@register_symbolic SymbolicUtils.gamma(x, y)
+
 using Elliptic # TODO transform this to a pakage extension
 @register_symbolic Elliptic.E(m)
 @register_symbolic Elliptic.E(phi, m) false
@@ -19,16 +25,18 @@ using PolyLog # TODO transform this to a pakage extension
 
 using Polynomials # TODO maybe implement division without this package for speed?
 
-export integrate, reload_rules
- 
-const USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
 
-@register_symbolic SymbolicUtils.expinti(x)
-@register_symbolic SymbolicUtils.expint(nu, z)
-@register_symbolic SymbolicUtils.gamma(x, y)
 
-include("rules_loader.jl")
-include("rules_utility_functions.jl")
+
 include("integration.jl")
+include("rules_utility_functions.jl")
+include("rules_loader.jl")
+
+export integrate, reload_rules
+
+const rules = SymbolicUtils.Rule[]
+const identifiers = String[]
+
+load_all_rules()
 
 end
