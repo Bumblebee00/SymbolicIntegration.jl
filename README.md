@@ -3,6 +3,7 @@
 - [Problems](#problems)
   - [Serious](#serious)
   - [Mild](#mild)
+    - [mild problem: oooomm](#mild-problem-oooomm)
   - [Minor](#minor)
 - [Contributing](#contributing)
 - [Testing](#testing)
@@ -93,20 +94,6 @@ Serious problems are problems that strongly impact the correct functioning of th
 ## Mild
 Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
 - some rules have the integral inside a function call (like substitute) with integral to be executed before the function call.
-- one rule can have more than one match. for example `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` can match `(1+2x)^2 * (3+4x)^3` with both m=2, n=3, ... or m=3, n=2, ... . Only one match of the possible ones is returned. but a usual rule form rubi is @rule pattern => if (conditions...) result else nothing. So first the pattern is found, but then if it doesnt match the conditions the rule returns nothing. But maybe one of the other possible matches matched the condition and the rule would have been applied. Mathematica does this:
-```
-A[(x_^m_) (y_^n_)] := m
-B[(x_^m_) (y_^n_)] := m /; EvenQ[m]
-
-In[20]:= A[x^3 y^2]
-
-Out[20]= 3
-
-In[21]:= B[x^3 y^2]
-
-Out[21]= 2
-```
-i have not yet found a case in which this problem causes a integration to fail, therfore i put it here in mild section
 
 - In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. For example:
 ```
@@ -119,6 +106,50 @@ julia> expand((-1 + 2x)^2 * (3 + 6x)^(2.1))
 (3 + 6x)^2.1 - 4x*((3 + 6x)^2.1) + 4(x^2)*((3 + 6x)^2.1)
 ```
 now this can be a problem, but also not, because, even though ``4(x^2)*((3 + 6x)^2.1)`` is more difficult to integrate than ``1/9 (3 + 6 x)^4.1``, the system should be able to integate both. But maybe for some advanced integrals the function `ExpandIntegrand` and it's exact behaviour is needed.
+
+### mild problem: oooomm
+oooomm stands for only one out of multiple matches.
+
+one rule can have more than one match. for example `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` can match `(1+2x)^2 * (3+4x)^3` with both m=2, n=3, ... or m=3, n=2, ... . Only one match of the possible ones is returned. but a usual rule form rubi is @rule pattern => if (conditions...) result else nothing. So first the pattern is found, but then if it doesnt match the conditions the rule returns nothing. But maybe one of the other possible matches matched the condition and the rule would have been applied. Mathematica does this:
+```
+A[(x_^m_) (y_^n_)] := m
+B[(x_^m_) (y_^n_)] := m /; EvenQ[m]
+
+In[20]:= A[x^3 y^2]
+
+Out[20]= 3
+
+In[21]:= B[x^3 y^2]
+
+Out[21]= 2
+```
+Note that this could be somewhat prevented putting conditions as predicates on the variables but has two drawbacks:
+- in those conditions you cannot use variables matched in the expression
+- you can put conditions on single variables but not conditions on the general rule match
+
+For example the problem presents itself in the following case. The rule is
+```julia
+("1_1_1_1_5",
+@rule ∫(((~!a) + (~!b)*(~u))^(~m),(~x)) =>
+    !contains_var((~a), (~b), (~m), (~x)) &&
+    linear((~u), (~x)) &&
+    !eq((~u), (~x)) ?
+1⨸Symbolics.coeff((~u), (~x)^ 1)*int_and_subst(((~a) + (~b)*(~x))^(~m),  (~x), (~x), (~u), "1_1_1_1_5") : nothing)
+```
+and this works:
+```
+julia> integrate((1+a*(1+x))^2,x)
+((1 + a*(1 + x))^3) / (3a)
+```
+but doing this (now integration variable is a) doesnt:
+```
+julia> integrate((1+x*(1+a))^2,a)
+No rule found for ∫((1 + (1 + a)*x)^2, a)
+```
+This is because in this new expression the matches are
+- ~u matches x
+- ~!b matches 1+a
+so the rule returns but then the condition `linear(x, a)` fails
 
 ## Minor
 - in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
