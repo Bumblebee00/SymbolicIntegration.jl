@@ -19,6 +19,7 @@ HypergeometricFunctions = "0.3.28"
 PolyLog = "2.6.0"
 Polynomials = "4.1.0"
 Symbolics = "6.40.0"
+SymbolicUtils = "3"
 julia = "1.6.7"
 
 [extras]
