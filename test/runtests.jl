@@ -47,12 +47,16 @@ function test_from_file(path)
     return (length(data), testfile_time, failed)
 end
 
-@variables x a b c d e n
+@variables x a b c d e f g h m n A B C D
 
-testset_paths = [ 
-"test_files/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
-# "test_files/1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
-# "test_files/0 Independent test suites/Bronstein Problems.jl"
+testset_paths = [
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+# "0 Independent test suites/Bronstein Problems.jl"
 ]
 
 _ = integrate(sin(x),x;verbose=false) # warming up
@@ -64,7 +68,7 @@ total_failed = 0
 total_time = 0
 
 for path in testset_paths
-    tmp = test_from_file(joinpath(@__DIR__,path))
+    tmp = test_from_file(joinpath(@__DIR__,"test_files/"*path))
 
     global total_tests += tmp[1]
     global total_time += tmp[2]

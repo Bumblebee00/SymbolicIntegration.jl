@@ -23,6 +23,14 @@ using HypergeometricFunctions # TODO transform this to a pakage extension
 using PolyLog # TODO transform this to a pakage extension
 @register_symbolic PolyLog.reli(n, z)
 
+elliptic_e(m) = Elliptic.E(m)
+elliptic_e(phi, m) = Elliptic.E(phi, m)
+elliptic_f(phi, m) = Elliptic.F(phi, m)
+
+hypergeometric2f1(a, b, c, z) = HypergeometricFunctions._₂F₁(Complex(a), Complex(b), Complex(c), Complex(z))
+
+appell_f1(a, b, c, d, e, z) = throw("AppellF1 function is not implemented yet")
+
 using Polynomials # TODO maybe implement division without this package for speed?
 
 
