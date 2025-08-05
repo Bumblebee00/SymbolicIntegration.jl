@@ -168,9 +168,19 @@ my typical workflow is:
 
 # Testing
 
-There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only some of them in julia. To run them, execute:
+There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only some of them in julia. To run them, execute in a terminal:
 ```
 julia --project=. test/runtests.jl
+```
+or in a Repl:
+```
+(@v1.11) pkg> activate .
+  Activating project at `~/.julia/dev/SymbolicIntegration.jl`
+
+julia> using Symbolics, SymbolicIntegration
+
+julia> include("test/runtests.jl")
+
 ```
 
 ## Testing other packages
