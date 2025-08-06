@@ -122,9 +122,54 @@ Out[20]= 3
 In[21]:= B[x^3 y^2]
 
 Out[21]= 2
+
+In[22]:= B[(a^3)*(b^5)]
+
+Out[22]= B[a^3 b^5] # this means the rule is not applied
 ```
-Note that this could be somewhat prevented putting conditions as predicates on the variables but has two drawbacks:
-- in those conditions you cannot use variables matched in the expression
+Note that this could be somewhat prevented putting conditions as predicates on the variables like this:
+```
+julia> ext_even(x::Number)=iseven(x)
+ext_even (generic function with 1 method)
+
+julia> ext_even(x)=false
+ext_even (generic function with 2 methods)
+
+julia> A = @rule (~x)^(~m) * (~y)^(~n) => (~x, ~y, ~m, ~n)
+(~x) ^ ~m * (~y) ^ ~n => (~x, ~y, ~m, ~n)
+
+julia> B = @rule (~x)^(~m::ext_even) * (~y)^(~n) => (~x, ~y, ~m, ~n)
+(~x) ^ ~(m::ext_even) * (~y) ^ ~n => (~x, ~y, ~m, ~n)
+
+julia> A((y^3) * (x^2))
+(y, x, 3, 2)
+
+julia> A((x^3) * (y^2))
+(y, x, 2, 3)
+
+julia> B((y^3) * (x^2))
+(x, y, 2, 3)
+
+julia> B((x^3) * (y^2))
+(y, x, 2, 3)
+
+julia> B((y^3) * (x^5))
+
+
+```
+but has two drawbacks:
+- in those conditions you cannot use variables matched in the expression, only the slot variable. so for example:
+```
+julia> C = @rule (~x)^(~m)*(~y)^(~n) => "success" where (~m)^(~n)==8
+(~x) ^ ~m * (~y) ^ ~n => ("success" where (~m) ^ ~n == 8)
+
+julia> C((y^2)*(x^3))
+"success"
+
+
+julia> C((x^2)*(y^3))
+
+```
 - you can put conditions on single variables but not conditions on the general rule match
 
 For example the problem presents itself in the following case. The rule is
