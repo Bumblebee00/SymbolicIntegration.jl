@@ -93,7 +93,6 @@ Serious problems are problems that strongly impact the correct functioning of th
 
 ## Mild
 Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
-- some rules have the integral inside a function call (like substitute) with integral to be executed before the function call.
 
 - In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. For example:
 ```
@@ -106,6 +105,19 @@ julia> expand((-1 + 2x)^2 * (3 + 6x)^(2.1))
 (3 + 6x)^2.1 - 4x*((3 + 6x)^2.1) + 4(x^2)*((3 + 6x)^2.1)
 ```
 now this can be a problem, but also not, because, even though ``4(x^2)*((3 + 6x)^2.1)`` is more difficult to integrate than ``1/9 (3 + 6 x)^4.1``, the system should be able to integate both. But maybe for some advanced integrals the function `ExpandIntegrand` and it's exact behaviour is needed.
+
+- 
+```
+julia> r = @rule (~a) + (~!b)*x => (~a, ~b)
+~a + ~(!b) * x => (~a, ~b)
+
+julia> r(1+c*x)
+(1, c)
+
+julia> r(1-c*x)
+
+```
+because -c*x is represented as a three factor moltiplication between -1, c and x
 
 ### mild problem: oooomm
 oooomm stands for only one out of multiple matches.
