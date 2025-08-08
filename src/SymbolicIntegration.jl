@@ -12,9 +12,17 @@ const USE_GAMMA = false # TODO make it work with revise and not just with reload
 @register_symbolic SymbolicUtils.gamma(x, y)
 
 using Elliptic # TODO transform this to a pakage extension
-@register_symbolic Elliptic.E(m)
-@register_symbolic Elliptic.E(phi, m) false
-@register_symbolic Elliptic.F(phi, m)
+@register_symbolic Elliptic.F(phi, m) # incomplete first kind
+@register_symbolic Elliptic.E(phi, m) # incomplete second kind
+@register_symbolic Elliptic.E(m) fasle # complete second kind
+@register_symbolic Elliptic.Pi(nu, phi, m) # incomplete third kind
+
+# changing name bc the . does no good in translation scritpt
+elliptic_f(phi, m) = Elliptic.F(phi, m)
+elliptic_e(m) = Elliptic.E(m)
+elliptic_e(phi, m) = Elliptic.E(phi, m)
+elliptipc_pi(nu, phi, m) = Elliptic.Pi(nu, phi, m)
+elliptic_pi(nu, m) = Elliptic.Pi(nu, π/2, m)
 
 using HypergeometricFunctions # TODO transform this to a pakage extension
 hypergeometric2f1(a, b, c, z) = HypergeometricFunctions._₂F₁(Complex(a), Complex(b), Complex(c), Complex(z))
@@ -25,9 +33,6 @@ appell_f1(a, b, c, d, e, z) = throw("AppellF1 function is not implemented yet")
 using PolyLog # TODO transform this to a pakage extension
 @register_symbolic PolyLog.reli(n, z)
 
-elliptic_e(m) = Elliptic.E(m)
-elliptic_e(phi, m) = Elliptic.E(phi, m)
-elliptic_f(phi, m) = Elliptic.F(phi, m)
 
 
 
