@@ -23,7 +23,8 @@ function test_from_file(path)
             elapsed_time = @elapsed computed_result = integrate(tuple[1], tuple[3]; verbose = false)
             push!(times, elapsed_time)
 
-            if isequal(simplify(computed_result  - tuple[2];expand=true), 0)
+            success = !SymbolicIntegration.contains_int(computed_result) && isequal(simplify(computed_result  - tuple[2];expand=true), 0)
+            if success
                 printstyled("[ ok ]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " (", round(elapsed_time, digits=4), "s)\n"; color = :green)
             else
                 printstyled("[fail]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " but got:\n      ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :red)
@@ -47,16 +48,18 @@ function test_from_file(path)
     return (length(data), testfile_time, failed)
 end
 
-@variables x a b c d e f g h m n A B C D
+@variables x a b c d e f g h k m n p A B C D I
 
 testset_paths = [
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
 # "0 Independent test suites/Bronstein Problems.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.1 (a+b x+c x^2)^p.jl"
+# "4 Trig functions/4.1 Sine/4.1.1.1 (a+b sin)^n.jl"
 ]
 
 _ = integrate(sin(x),x;verbose=false) # warming up
