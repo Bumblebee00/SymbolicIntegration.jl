@@ -215,11 +215,12 @@ so the rule returns but then the condition `linear(x, a)` fails
 
 # Contributing
 In this repo there is also some software that serves the sole purpose of helping with the translation of rules from Mathematica syntax, and not for the actual package working. The important ones are:
-- rules_translator.jl is a script that with regex and other string manipulations translates from Mathematica syntax to julia syntax
+- translator_of_rules.jl is a script that with regex and other string manipulations translates from Mathematica syntax to julia syntax
+- translator_of_testset.jl is a script that translates the testsets into julia syntax, much simpler than translator_of_rules.jl
 - `reload_rules` function in rules_loader.jl. When developing the package using Revise is not enough because rules are definied with a macro. So this function reloads rules from a specific .jl file or from all files if called without arguments (it's called also once at the beginning when importing the package)
 
 my typical workflow is:
-- translate a rule file with rules translator. In the resulting file there are usually some problems, that could be: a Mathematica function that i never encountered before and therefore not included in the translation script (and in rules_utility_functions.jl), a Mathematica syntax that I never encountered before and not included in the translation script, stuff like this.
+- translate a rule file with translator_of_rules.jl. In the resulting file there are usually some problems, that could be: a Mathematica function that i never encountered before and therefore not included in the translation script (and in rules_utility_functions.jl), a Mathematica syntax that I never encountered before and not included in the translation script, stuff like this.
 - If the problem is quite common in other rules: implement in the translation script and transalte the rule again, otherwise fix it manually in the .jl file
 - Add some tests in the file each_rule_tests.jl, where I am collecting integrals that trigger (or should do so, if they don't something is broken) specific integration rules. I am not doing it for all rules because I dont have time, but two or three for each rule file
 
