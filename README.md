@@ -66,9 +66,7 @@ julia> integrate(x/(x^2 +1) + π*exp(π*x);verbose=true)
 └---with result: 0.3183098861837907(ℯ^(πx))
 (1//2)*log(1 + x^2) + ℯ^(πx)
 ```
-first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them.
-
-In this development phase there is also a function `reload_rules` (to be called optionally with verbose=true) to reload the rules, because using Revise is not enough.
+first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them. The +c is omitted :) .
 
 # How it works internally
 This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica package [RUBI](https://rulebasedintegration.org/). The rules are definied using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
@@ -118,6 +116,8 @@ julia> r(1-c*x)
 
 ```
 because -c*x is represented as a three factor moltiplication between -1, c and x
+
+- integrals with complex numers dont work very well
 
 ### mild problem: oooomm
 oooomm stands for only one out of multiple matches.
