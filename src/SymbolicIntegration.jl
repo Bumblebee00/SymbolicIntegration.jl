@@ -125,7 +125,9 @@ all_rules_paths = [
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.1 (a+b sin)^n.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.2 (g cos)^p (a+b sin)^m.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.3 (g tan)^p (a+b sin)^m.jl"
-
+# 4---9
+"4 Trig functions/4.1 Sine/4.1.10 (c+d x)^m (a+b sin)^n.jl"
+# 11
 "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.jl"
 ]
 load_all_rules()
