@@ -7,9 +7,17 @@ using Symbolics
 
 const USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
 
+# function from SpecialFunctions.jl that are not yet registerd
 @register_symbolic SymbolicUtils.expinti(x)
 @register_symbolic SymbolicUtils.expint(nu, z)
 @register_symbolic SymbolicUtils.gamma(x, y)
+@register_symbolic SymbolicUtils.sinint(x)
+@register_symbolic SymbolicUtils.cosint(x)
+# other from SpecialFunctions.jl used:
+# SymbolicUtils.gamma(x)
+# SymbolicUtils.loggamma
+# SymbolicUtils.erfi
+# SymbolicUtils.erf
 
 using Elliptic # TODO transform this to a pakage extension
 @register_symbolic Elliptic.F(phi, m) # incomplete first kind
@@ -32,6 +40,10 @@ appell_f1(a, b, c, d, e, z) = throw("AppellF1 function is not implemented yet")
 
 using PolyLog # TODO transform this to a pakage extension
 @register_symbolic PolyLog.reli(n, z)
+
+using FresnelIntegrals
+@register_symbolic FresnelIntegrals.fresnelc(z)
+@register_symbolic FresnelIntegrals.fresnels(z)
 
 
 
@@ -113,6 +125,8 @@ all_rules_paths = [
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.1 (a+b sin)^n.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.2 (g cos)^p (a+b sin)^m.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.3 (g tan)^p (a+b sin)^m.jl"
+
+"4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.jl"
 ]
 load_all_rules()
 
