@@ -130,6 +130,6 @@ all_rules_paths = [
 # 11
 "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.jl"
 ]
-load_all_rules()
+load_rules()
 
 end
