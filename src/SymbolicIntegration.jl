@@ -122,13 +122,23 @@ all_rules_paths = [
 "3 Logarithms/3.4 u (a+b log(c (d+e x^m)^n))^p.jl"
 "3 Logarithms/3.5 Miscellaneous logarithms.jl"
 
+"4 Trig functions/4.1 Sine/4.1.0/4.1.0.1 (a sin)^m (b trg)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.0/4.1.0.2 (a trg)^m (b tan)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.0/4.1.0.3 (a csc)^m (b sec)^n.jl"
+
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.1 (a+b sin)^n.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.2 (g cos)^p (a+b sin)^m.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.3 (g tan)^p (a+b sin)^m.jl"
-# 4---9
+
+# 4.1.2.
+
+# 4.1.3-4.1.9
 "4 Trig functions/4.1 Sine/4.1.10 (c+d x)^m (a+b sin)^n.jl"
 # 11
 "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.jl"
+
+"4 Trig functions/4.3 Tangent/4.3.1.1 (a+b tan)^n.m"
+"4 Trig functions/4.3 Tangent/4.3.1.3 (d sin)^m (a+b tan)^n.jl"
 ]
 load_rules()
 
