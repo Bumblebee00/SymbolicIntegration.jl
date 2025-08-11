@@ -22,8 +22,6 @@
   Activating project at `~/.julia/dev/SymbolicIntegration.jl`
 
 julia> using Symbolics, SymbolicIntegration
-Precompiling SymbolicIntegration...
-  1 dependency successfully precompiled in 11 seconds. 150 already precompiled.
 
 julia> @variables x a
 2-element Vector{Num}:
