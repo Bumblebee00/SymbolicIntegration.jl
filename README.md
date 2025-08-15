@@ -85,7 +85,6 @@ Not all rules are yet translated, I am each day translating more of them. If you
 ## Serious
 Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountred so far:
 - pattern matching with negative powers. If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression. For this reason `(1 + 3x)^2 / (1 + 2x))`, `(x^6) / (1 + 2(x^6))` and many other expressions dont get integrated
-- Number of rules. there are a lot of rules and translating them is really slow
 
 ## Mild
 Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
@@ -104,11 +103,15 @@ now this can be a problem, but also not, because, even though ``4(x^2)*((3 + 6x)
 
 - 
 ```
-julia> r = @rule (~a) + (~!b)*x => (~a, ~b)
-~a + ~(!b) * x => (~a, ~b)
+julia> r = @rule (~a) + (~!b)*x => ~
+~a + ~(!b) * x => (~)
 
 julia> r(1+c*x)
-(1, c)
+Base.ImmutableDict{Symbol, Any} with 4 entries:
+  :MATCH => 1 + c*x
+  :b     => c
+  :a     => 1
+  :____  => nothing
 
 julia> r(1-c*x)
 
@@ -214,13 +217,56 @@ so the rule returns but then the condition `linear(x, a)` fails
 # Contributing
 In this repo there is also some software that serves the sole purpose of helping with the translation of rules from Mathematica syntax, and not for the actual package working. The important ones are:
 - translator_of_rules.jl is a script that with regex and other string manipulations translates from Mathematica syntax to julia syntax
-- translator_of_testset.jl is a script that translates the testsets into julia syntax, much simpler than translator_of_rules.jl
-- `reload_rules` function in rules_loader.jl. When developing the package using Revise is not enough because rules are definied with a macro. So this function reloads rules from a specific .jl file or from all files if called without arguments (it's called also once at the beginning when importing the package)
+- translator_of_testset.jl is a script that translates the testsets into julia syntax (much simpler than translator_of_rules.jl)
+- `reload_rules` function in rules_loader.jl. When developing the package using Revise is not enough because rules are definied with a macro. So this function reloads rules from a specific .jl file or from all files if called without arguments.
 
 my typical workflow is:
-- translate a rule file with translator_of_rules.jl. In the resulting file there are usually some problems, that could be: a Mathematica function that i never encountered before and therefore not included in the translation script (and in rules_utility_functions.jl), a Mathematica syntax that I never encountered before and not included in the translation script, stuff like this.
+- translate a rule file with translator_of_rules.jl. In the resulting file there could be some problems:
+- - maybe a Mathematica function that i never encountered before and therefore not included in the translation script (and in rules_utility_functions.jl)
+- - maybe a Mathematica syntax that I never encountered before and not included in the translation script
+- - others, see [Common probelms when translating rules](#common-probelms-when-translating-rules)
 - If the problem is quite common in other rules: implement in the translation script and transalte the rule again, otherwise fix it manually in the .jl file
-- Add some tests in the file each_rule_tests.jl, where I am collecting integrals that trigger (or should do so, if they don't something is broken) specific integration rules. I am not doing it for all rules because I dont have time, but two or three for each rule file
+
+## Common probelms when translating rules
+### Funciton not translated
+If you encounter a normal function that is not translated by the script, it will stay untranslated, with square brakets, like this:
+```
+sqrt(Sign[(~b)]*sin((~e) + (~f)*(~x)))⨸sqrt((~d)*sin((~e) + (~f)*(~x)))* ∫(1⨸(sqrt((~a) + (~b)*sin((~e) + (~f)*(~x)))*sqrt(Sign[(~b)]*sin((~e) + (~f)*(~x)))), (~x)) : nothing)
+```
+a trick to find them fast is to search the regex pattern `(?<=^[^#]).*\[` in all the file. If you find them and they are already presen in julia or you implement them in rules_utility_functions.jl, you can simply add the to the smart_replace list in the translator and translate the script again.
+
+### Sum function translation
+the `Sum[...]` function gets translated with this regex:
+```
+(r"Sum\[(.*?),\s*\{(.*?),(.*?),(.*?)\}\]", s"sum([\1 for \2 in (\3):(\4)])"), 
+```
+its quite common that the \1 is a <=2 letter variable, and so will get translated from the translator into a slot vairable, appending ~.
+
+For example
+```
+Sum[Int[1/(1 - Sin[e + f*x]^2/((-1)^(4*k/n)*Rt[-a/b, n/2])), x], {k, 1, n/2}]
+```
+gets translated to 
+```
+sum([∫(1⨸(1 - sin((~e) + (~f)*(~x))^2⨸((-1)^(4*(~k)⨸(~n))*rt(-(~a)⨸(~b), (~n)⨸2))), (~x)) for (~k) in ( 1):( (~n)⨸2)]
+```
+while it should be
+```
+sum([∫(1⨸(1 - sin((~e) + (~f)*(~x))^2⨸((-1)^(4*k⨸(~n))*rt(-(~a)⨸(~b), (~n)⨸2))), (~x)) for k in ( 1):( (~n)⨸2)]),
+```
+so what I usually do is to change the "index of the summation" variable to a >2 letters name in the Mathematica file, like this
+```
+Sum[Int[1/(1 - Sin[e + f*x]^2/((-1)^(4*iii/n)*Rt[-a/b, n/2])), x], {iii, 1, n/2}]
+```
+so that will not be translated into slot variable.
+```
+sum([∫(1⨸(1 - sin((~e) + (~f)*(~x))^2⨸((-1)^(4*iii⨸(~n))*rt(-(~a)⨸(~b), (~n)⨸2))), (~x)) for iii in ( 1):( (~n)⨸2)]),
+```
+### Module syntax translation
+The `Module` Syntax is similar to the `With` syntax, but a bit different and for now is not handled by the script
+
+
+
 
 # Testing
 
