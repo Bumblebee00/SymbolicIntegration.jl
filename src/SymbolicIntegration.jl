@@ -111,9 +111,18 @@ all_rules_paths = [
 
 # 1.2 --- others
 
+
+
+
+
 "2 Exponentials/2.1 (c+d x)^m (a+b (F^(g (e+f x)))^n)^p.jl"
 "2 Exponentials/2.2 (c+d x)^m (F^(g (e+f x)))^n (a+b (F^(g (e+f x)))^n)^p.jl"
 "2 Exponentials/2.3 Miscellaneous exponentials.jl"
+
+
+
+
+
 
 "3 Logarithms/3.1/3.1.1 (a+b log(c x^n))^p.jl"
 "3 Logarithms/3.1/3.1.2 (d x)^m (a+b log(c x^n))^p.jl"
@@ -127,6 +136,10 @@ all_rules_paths = [
 "3 Logarithms/3.4 u (a+b log(c (d+e x^m)^n))^p.jl"
 "3 Logarithms/3.5 Miscellaneous logarithms.jl"
 
+
+
+
+
 "4 Trig functions/4.1 Sine/4.1.0/4.1.0.1 (a sin)^m (b trg)^n.jl"
 "4 Trig functions/4.1 Sine/4.1.0/4.1.0.2 (a trg)^m (b tan)^n.jl"
 "4 Trig functions/4.1 Sine/4.1.0/4.1.0.3 (a csc)^m (b sec)^n.jl"
@@ -135,16 +148,30 @@ all_rules_paths = [
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.2 (g cos)^p (a+b sin)^m.jl"
 "4 Trig functions/4.1 Sine/4.1.1/4.1.1.3 (g tan)^p (a+b sin)^m.jl"
 
-# 4.1.2.
+"4 Trig functions/4.1 Sine/4.1.2/4.1.2.1 (a+b sin)^m (c+d sin)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.2/4.1.2.2 (g cos)^p (a+b sin)^m (c+d sin)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.2/4.1.2.3 (g sin)^p (a+b sin)^m (c+d sin)^n.jl"
 
-# 4.1.3-4.1.9
+"4 Trig functions/4.1 Sine/4.1.3 (a+b sin)^m (c+d sin)^n (A+B sin).jl"
+
+"4 Trig functions/4.1 Sine/4.1.4/4.1.4.1 (a+b sin)^m (A+B sin+C sin^2).jl"
+"4 Trig functions/4.1 Sine/4.1.4/4.1.4.2 (a+b sin)^m (c+d sin)^n (A+B sin+C sin^2).jl"
+
+"4 Trig functions/4.1 Sine/4.1.5 trig^m (a cos+b sin)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.6 (a+b cos+c sin)^n.jl"
+"4 Trig functions/4.1 Sine/4.1.7 (d trig)^m (a+b (c sin)^n)^p.jl"
+# 4.1.8
+"4 Trig functions/4.1 Sine/4.1.9 trig^m (a+b sin^n+c sin^(2 n))^p.jl"
 "4 Trig functions/4.1 Sine/4.1.10 (c+d x)^m (a+b sin)^n.jl"
-# 11
+"4 Trig functions/4.1 Sine/4.1.11 (e x)^m (a+b x^n)^p sin.jl"
 "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.jl"
+"4 Trig functions/4.1 Sine/4.1.13 (d+e x)^m sin(a+b x+c x^2)^n.jl"
 
 "4 Trig functions/4.3 Tangent/4.3.1.1 (a+b tan)^n.jl"
 "4 Trig functions/4.3 Tangent/4.3.1.2 (d sec)^m (a+b tan)^n.jl"
 "4 Trig functions/4.3 Tangent/4.3.1.3 (d sin)^m (a+b tan)^n.jl"
+
+"4 Trig functions/4.7 Miscellaneous/4.7.4 (c trig)^m (d trig)^n.jl"
 ]
 load_rules()
 
