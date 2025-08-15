@@ -185,6 +185,7 @@ julia> C((x^2)*(y^3))
 ```
 - you can put conditions on single variables but not conditions on the general rule match
 
+#### Example in intgeration
 For example the problem presents itself in the following case. The rule is
 ```julia
 ("1_1_1_1_5",
@@ -208,6 +209,18 @@ This is because in this new expression the matches are
 - ~u matches x
 - ~!b matches 1+a
 so the rule returns but then the condition `linear(x, a)` fails
+
+#### another example
+`1/(sqrt(1+200x)*sqrt(2-x))` shoud integrate with the rule
+```
+("1_1_1_2_23",
+@rule ∫(1/(sqrt((~!a) + (~!b)*(~x))*sqrt((~!c) + (~!d)*(~x))),(~x)) =>
+    !contains_var((~a), (~b), (~c), (~d), (~x)) &&
+    gt((~b)*(~c) - (~a)*(~d), 0) &&
+    gt((~b), 0) ?
+2⨸sqrt((~b))* int_and_subst(1⨸sqrt((~b)*(~c) - (~a)*(~d) + (~d)*(~x)^2), (~x), (~x), sqrt((~a) + (~b)*(~x)), "1_1_1_2_23") : nothing)
+```
+but the second condition is true only for `200*2 - 1*(-1) = 401 > 0` and not for `(-1)*1 - 2*200 = -401 not > 0`
 
 ## Minor
 - in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
