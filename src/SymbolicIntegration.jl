@@ -62,6 +62,13 @@ export integrate, reload_rules
 const rules = SymbolicUtils.Rule[]
 const identifiers = String[]
 
+# TODO make them const?
+# global variable to print or not the integration steps
+VERBOSE::Base.Bool
+# global array of rules identifiers, to not print the corresponding rule. It's
+# needed otherwise rules with subst_and_int would be printed twice
+SILENCE = String[]
+
 all_rules_paths = [
 "9 Miscellaneous/9.1 Integrand simplification rules.jl"
 
