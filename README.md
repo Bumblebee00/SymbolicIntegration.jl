@@ -35,33 +35,24 @@ julia> integrate(a^2, x)
 (a^2)*x
 
 julia> integrate(x/(x^2 +1) + π*exp(π*x);verbose=true)
-┌---Applied rule 9_1_0 on ∫(x / (1 + x^2) + 3.141592653589793exp(πx), x)
-| ∫(+(~(~a)), ~x) => sum(map((f->begin
-|                     #= /Users/mmm/.julia/dev/SymbolicIntegration.jl/src/rules/9 Miscellaneous/9.1 Integrand simplification rules.jl:6 =#
-|                     ∫(f, ~x)
-|                 end), ~a))
-└---with result: ∫(3.141592653589793exp(πx), x) + ∫(x / (1 + x^2), x)
-┌---Applied rule 1_1_2_2_1 on ∫(x / (1 + x^2), x)
-| ∫(~x / (~a + ~(!b) * (~x) ^ 2), ~x) => if !(contains_var(~a, ~b, ~x))
-|         log(~a + ~b * (~x) ^ 2) ⨸ (2 * ~b)
-|     else
-|         nothing
-|     end
-└---with result: (1//2)*log(1 + x^2)
-┌---Applied rule 9_1_12 on ∫(3.141592653589793exp(πx), x)
-| ∫(~(~a) * ~u, ~x) => if !(contains_var(prod(~a), ~x))
-|         prod(~a) * ∫(~u, ~x)
-|     else
-|         nothing
-|     end
-└---with result: 3.141592653589793∫(exp(πx), x)
-┌---Applied rule 2_3_1 on ∫(exp(πx), x)
-| ∫(((~F) ^ (~(!c) * (~(!a) + ~(!b) * ~x))) ^ ~(!n), ~x) => if !(contains_var(~F, ~a, ~b, ~c, ~n, ~x))
-|         ((~F) ^ (~c * (~a + ~b * ~x))) ^ ~n ⨸ (~b * ~c * ~n * log(~F))
-|     else
-|         nothing
-|     end
-└---with result: 0.3183098861837907(ℯ^(πx))
+┌-------Applied rule 9_1_0 on ∫(x / (1 + x^2) + 3.141592653589793exp(πx), x)
+| ∫( +(a...), x) => sum([ ∫(f, x) for f in a ])
+└-------with result: ∫(3.141592653589793exp(πx), x) + ∫(x / (1 + x^2), x)
+┌-------Applied rule 1_1_2_2_1 on ∫(x / (1 + x^2), x)
+| ∫(x / (a + b * x ^ 2), x) => if 
+|       !(contains_var(a, b, x))
+| log(a + b * x ^ 2) / (2 * b)
+└-------with result: (1//2)*log(1 + x^2)
+┌-------Applied rule 9_1_12 on ∫(3.141592653589793exp(πx), x)
+| ∫(a * u, x) => if 
+|       !(contains_var(prod(a), x))
+| prod(a) * ∫(u, x)
+└-------with result: 3.141592653589793∫(exp(πx), x)
+┌-------Applied rule 2_3_1 on ∫(exp(πx), x)
+| ∫((F ^ (c * (a + b * x))) ^ n, x) => if 
+|       !(contains_var(F, a, b, c, n, x))
+| (F ^ (c * (a + b * x))) ^ n / (b * c * n * log(F))
+└-------with result: 0.3183098861837907(ℯ^(πx))
 (1//2)*log(1 + x^2) + ℯ^(πx)
 ```
 first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them. The +c is omitted :) .
