@@ -1,11 +1,12 @@
 module SymbolicIntegration
 
 using Symbolics
+using Polynomials # TODO maybe implement division without using this package? for speed
 
-# subst is just for when integral inside the real subst function is not solved
-@syms ∫(var1,var2) subst(var1, var2, var3)
 
-const USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
+
+# ===== Special functions from a lot of packages
+# TODO maybe transform all these imports to pakage extensions? so they dont get imported if not needed?
 
 # function from SpecialFunctions.jl that are not yet registerd
 @register_symbolic SymbolicUtils.expinti(x)
@@ -19,7 +20,7 @@ const USE_GAMMA = false # TODO make it work with revise and not just with reload
 # SymbolicUtils.erfi
 # SymbolicUtils.erf
 
-using Elliptic # TODO transform this to a pakage extension
+using Elliptic 
 @register_symbolic Elliptic.F(phi, m) # incomplete first kind
 @register_symbolic Elliptic.E(phi, m) # incomplete second kind
 @register_symbolic Elliptic.E(m) false # complete second kind
@@ -32,13 +33,13 @@ elliptic_e(phi, m) = Elliptic.E(phi, m)
 elliptic_pi(nu, phi, m) = Elliptic.Pi(nu, phi, m)
 elliptic_pi(nu, m) = Elliptic.Pi(nu, π/2, m)
 
-using HypergeometricFunctions # TODO transform this to a pakage extension
+using HypergeometricFunctions
 hypergeometric2f1(a, b, c, z) = HypergeometricFunctions._₂F₁(Complex(a), Complex(b), Complex(c), Complex(z))
 @register_symbolic hypergeometric2f1(a, b, c, z)
 appell_f1(a, b, c, d, e, z) = throw("AppellF1 function is not implemented yet")
 @register_symbolic appell_f1(a, b, c, d, e, z)
 
-using PolyLog # TODO transform this to a pakage extension
+using PolyLog
 @register_symbolic PolyLog.reli(n, z)
 
 using FresnelIntegrals
@@ -48,26 +49,36 @@ using FresnelIntegrals
 
 
 
-using Polynomials # TODO maybe implement division without this package for speed?
 
-
-
-
+# ===== Includes and exports
 include("integration.jl")
 include("rules_utility_functions.jl")
 include("rules_loader.jl")
 
 export integrate, reload_rules
 
-const rules = SymbolicUtils.Rule[]
-const identifiers = String[]
 
-# TODO make them const?
-# global variable to print or not the integration steps
-VERBOSE::Base.Bool
-# global array of rules identifiers, to not print the corresponding rule. It's
-# needed otherwise rules with subst_and_int would be printed twice
-SILENCE = String[]
+
+
+
+# ===== Global variables
+# symbolic functions
+# ∫(intgerand, intgeration variable)
+# subst is just for when integral inside the real subst function is not solved
+@syms ∫(var1,var2) subst(var1, var2, var3)
+
+# very big arrays containing rules and their identifiers
+const RULES = SymbolicUtils.Rule[]
+const IDENTIFIERS = String[]
+
+# to use or not the gamma function in integration results
+USE_GAMMA = false # TODO make it work with revise and not just with reloading rules
+
+# to print or not the integration steps
+VERBOSE = false
+# global array of rules identifiers to not print the corresponding rule
+# It's needed otherwise rules with subst_and_int would be printed twice
+const SILENCE = String[]
 
 all_rules_paths = [
 "9 Miscellaneous/9.1 Integrand simplification rules.jl"
@@ -181,6 +192,8 @@ all_rules_paths = [
 
 "4 Trig functions/4.7 Miscellaneous/4.7.4 (c trig)^m (d trig)^n.jl"
 ]
+
+# ===== Rules loading
 load_rules()
 
 end

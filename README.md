@@ -22,6 +22,7 @@
   Activating project at `~/.julia/dev/SymbolicIntegration.jl`
 
 julia> using Symbolics, SymbolicIntegration
+Loaded 2669 rules from 64 files.
 
 julia> @variables x a
 2-element Vector{Num}:
@@ -56,6 +57,8 @@ julia> integrate(x/(x^2 +1) + π*exp(π*x);verbose=true)
 (1//2)*log(1 + x^2) + ℯ^(πx)
 ```
 first argument is the expression to integrate, second argument is the variable of integration. If the variable is not specified, it will be guessed from the expression. Put verbose=true to see intermediate integration steps, and the rules used to reach them. The +c is omitted :) .
+
+The load time of the package is quite big, it takes time to create all rules. On a macboockair m1 it does approx 750 rules/min, so ~4 min to load all the rules.
 
 # How it works internally
 This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica package [RUBI](https://rulebasedintegration.org/). The rules are definied using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
