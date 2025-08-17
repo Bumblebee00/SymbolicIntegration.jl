@@ -296,7 +296,8 @@ sum([∫(1⨸(1 - sin((~e) + (~f)*(~x))^2⨸((-1)^(4*iii⨸(~n))*rt(-(~a)⨸(~b)
 ### Module syntax translation
 The `Module` Syntax is similar to the `With` syntax, but a bit different and for now is not handled by the script
 
-
+### * not present or present as \[Star]
+in Mathematica if you write `a b` or `a \[Star] b` is interpreted as `a*b`. So sometimes in the rules is written like that. When it happens i usually add the * in the mathematica file,  and then i translate it
 
 
 # Testing
