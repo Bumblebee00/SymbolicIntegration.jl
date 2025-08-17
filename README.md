@@ -5,8 +5,14 @@
     - [neim problem](#neim-problem)
   - [Mild](#mild)
     - [mild problem: oooomm](#mild-problem-oooomm)
+      - [Example in intgeration](#example-in-intgeration)
+      - [another example](#another-example)
   - [Minor](#minor)
 - [Contributing](#contributing)
+  - [Common probelms when translating rules](#common-probelms-when-translating-rules)
+    - [Funciton not translated](#funciton-not-translated)
+    - [Sum function translation](#sum-function-translation)
+    - [Module syntax translation](#module-syntax-translation)
 - [Testing](#testing)
   - [Testing other packages](#testing-other-packages)
     - [SymbolicNumericIntegration.jl](#symbolicnumericintegrationjl)
@@ -96,20 +102,22 @@ a*b*(c^-1)*(x^-1)
 ```
 creating a power with negative exponent, with `Term` and not with `^`, doesnt autosimplify it to a division with positive exponent. So the rule can be applied
 
+- general rules for trig with F
+
 ## Mild
 Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
 
-- In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. For example:
+- In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. Not all cases are been adderssed for now
+
+- when testing, one checks that the integral is correct with `isequal(simplify(computed_result  - real_result;expand=true), 0)` but this doesnt always work. For example:
 ```
-ExpandIntegrand[(-1 + 2 x)^2*(3 + 6 x)^(2.1), x]
-4 (3 + 6 x)^2.1 - 4/3 (3 + 6 x)^3.1 + 1/9 (3 + 6 x)^4.1
+[fail]∫( (x^2)*sqrt(1 + x) )dx = 
+  (2//3)*((1 + x)^(3//2)) - (4//5)*((1 + x)^(5//2)) + (2//7)*((1 + x)^(7//2)) but got:
+  -(4//7)*(-(2//3)*((1 + x)^(3//2)) + (2//5)*((1 + x)^(5//2))) + (2//7)*((1 + x)^(3//2))*(x^2)
+[fail]∫( (2^sqrt(x)) / sqrt(x) )dx = 1.4426950408889634(2^(1 + sqrt(x))) but got:
+      2.8853900817779268(2^(x^(1//2))) (0.2489s)
 ```
-that is not the obvious expansion of expanding the square of binomial, that is also what the SymbolicUtils function ``expand`` does
-```
-julia> expand((-1 + 2x)^2 * (3 + 6x)^(2.1))
-(3 + 6x)^2.1 - 4x*((3 + 6x)^2.1) + 4(x^2)*((3 + 6x)^2.1)
-```
-now this can be a problem, but also not, because, even though ``4(x^2)*((3 + 6x)^2.1)`` is more difficult to integrate than ``1/9 (3 + 6 x)^4.1``, the system should be able to integate both. But maybe for some advanced integrals the function `ExpandIntegrand` and it's exact behaviour is needed.
+even tough the two are mathematically equivalent
 
 - 
 ```
