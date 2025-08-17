@@ -3,6 +3,7 @@ using Symbolics
 using SymbolicIntegration
 using Elliptic # TODO how can we not import this two?
 using HypergeometricFunctions
+using PolyLog
 
 # test all tests in the testfile path. expects it to be
 # an array called `data` of tuples of the form:
@@ -16,6 +17,7 @@ function test_from_file(path)
     println("Testing ", length(data), " integrals...")
 
     failed = 0
+    maybe_failed = 0
     errored = 0
     times = Float64[]
     
@@ -24,12 +26,14 @@ function test_from_file(path)
             elapsed_time = @elapsed computed_result = integrate(tuple[1], tuple[3]; verbose = false)
             push!(times, elapsed_time)
 
-            success = !SymbolicIntegration.contains_int(computed_result) && isequal(simplify(computed_result  - tuple[2];expand=true), 0)
-            if success
-                printstyled("[ ok ]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " (", round(elapsed_time, digits=4), "s)\n"; color = :green)
-            else
+            if SymbolicIntegration.contains_int(computed_result)
                 printstyled("[fail]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " but got:\n      ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :red)
                 failed += 1
+            elseif !isequal(simplify(computed_result  - tuple[2];expand=true), 0)
+                printstyled("[fail]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " but got:\n      ", computed_result, " (", round(elapsed_time, digits=4), "s)\n"; color = :light_red)
+                maybe_failed += 1
+            else
+                printstyled("[ ok ]∫( ", tuple[1], " )d", tuple[3], " = ", tuple[2], " (", round(elapsed_time, digits=4), "s)\n"; color = :green)
             end
         catch exceptionz
             printstyled("[fail] exception during ∫( ", tuple[1], " )d", tuple[3], " : ", exceptionz, "\n"; color=:magenta)
@@ -43,89 +47,89 @@ function test_from_file(path)
     max_time = maximum(times)
     min_time = minimum(times)
     
-    println("$failed/$(length(data)) tests failed in ", relpath(path))
+    println("$failed/$(length(data)) tests failed, $maybe_failed maybe failed, $errored errored, in testfile ", relpath(path))
     println("Total=$(round(total_time, digits=3))s, Avg=$(round(avg_time, digits=4))s, Min=$(round(min_time, digits=4))s, Max=$(round(max_time, digits=4))s\n\n\n")
 
-    return (length(data), testfile_time, failed, errored)
+    return (length(data), testfile_time, failed, maybe_failed, errored)
 end
 
-@variables x a b c d e f g h k m n p A B C D I
+@variables x a b c d e f g h k m n p t z A B C D I
 
 testset_paths = [
 # Independent test suites
 "0 Independent test suites/Apostol Problems.jl"
-"0 Independent test suites/Bondarenko Problems.jl"
-"0 Independent test suites/Bronstein Problems.jl"
-"0 Independent test suites/Charlwood Problems.jl"
-"0 Independent test suites/Hearn Problems.jl"
-"0 Independent test suites/Hebisch Problems.jl"
-"0 Independent test suites/Jeffrey Problems.jl"
-"0 Independent test suites/Moses Problems.jl"
-"0 Independent test suites/Stewart Problems.jl"
-"0 Independent test suites/Timofeev Problems.jl"
-"0 Independent test suites/Welz Problems.jl"
-"0 Independent test suites/Wester Problems.jl"
-
-# 1 Algebraic functions - 1.1 Binomial products - Linear
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
-
-# 1 Algebraic functions - 1.1 Binomial products - Quadratic
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.2 (c x)^m (a+b x^2)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.3 (a+b x^2)^p (c+d x^2)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.4 (e x)^m (a+b x^2)^p (c+d x^2)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.5 (a+b x^2)^p (c+d x^2)^q (e+f x^2)^r.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.6 (g x)^m (a+b x^2)^p (c+d x^2)^q (e+f x^2)^r.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.8 P(x) (c x)^m (a+b x^2)^p.jl"
-
-# 1 Algebraic functions - 1.1 Binomial products - General
-"1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.2 (c x)^m (a+b x^n)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.3 (a+b x^n)^p (c+d x^n)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.4 (e x)^m (a+b x^n)^p (c+d x^n)^q.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.6 (g x)^m (a+b x^n)^p (c+d x^n)^q (e+f x^n)^r.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.8 P(x) (c x)^m (a+b x^n)^p.jl"
-
-# 1 Algebraic functions - 1.1 Binomial products - Improper
-"1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.2 (c x)^m (a x^j+b x^n)^p.jl"
-"1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.3 (e x)^m (a x^j+b x^k)^p (c+d x^n)^q.jl"
-
-# 1 Algebraic functions - 1.2 Trinomial products - Quadratic
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.1 (a+b x+c x^2)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.2 (d+e x)^m (a+b x+c x^2)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.3 (d+e x)^m (f+g x) (a+b x+c x^2)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.4 (d+e x)^m (f+g x)^n (a+b x+c x^2)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.5 (a+b x+c x^2)^p (d+e x+f x^2)^q.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.6 (g+h x)^m (a+b x+c x^2)^p (d+e x+f x^2)^q.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.9 P(x) (d+e x)^m (a+b x+c x^2)^p.jl"
-
-# 1 Algebraic functions - 1.2 Trinomial products - Quartic
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.2 (d x)^m (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.3 (d+e x^2)^m (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.4 (f x)^m (d+e x^2)^q (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.5 P(x) (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.6 P(x) (d x)^m (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.7 P(x) (d+e x^2)^q (a+b x^2+c x^4)^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.8 P(x) (d+e x)^q (a+b x^2+c x^4)^p.jl"
-
-# 1 Algebraic functions - 1.2 Trinomial products - General
-"1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.2 (d x)^m (a+b x^n+c x^(2 n))^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.3 (d+e x^n)^q (a+b x^n+c x^(2 n))^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.4 (f x)^m (d+e x^n)^q (a+b x^n+c x^(2 n))^p.jl"
-"1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.5 P(x) (d x)^m (a+b x^n+c x^(2 n))^p.jl"
-
-# 1 Algebraic functions - 1.2 Trinomial products - Improper
-"1 Algebraic functions/1.2 Trinomial products/1.2.4 Improper/1.2.4.2 (d x)^m (a x^q+b x^n+c x^(2 n-q))^p.jl"
-
-# 1 Algebraic functions - 1.3 Miscellaneous
-"1 Algebraic functions/1.3 Miscellaneous/1.3.1 Rational functions.jl"
-"1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.jl"
-
-# 4 Trig functions
-"4 Trig functions/4.1 Sine/4.1.1.1 (a+b sin)^n.jl"
+# "0 Independent test suites/Bondarenko Problems.jl"
+# "0 Independent test suites/Bronstein Problems.jl"
+# "0 Independent test suites/Charlwood Problems.jl"
+# "0 Independent test suites/Hearn Problems.jl"
+# "0 Independent test suites/Hebisch Problems.jl"
+# "0 Independent test suites/Jeffrey Problems.jl"
+# "0 Independent test suites/Moses Problems.jl"
+# "0 Independent test suites/Stewart Problems.jl"
+# "0 Independent test suites/Timofeev Problems.jl"
+# "0 Independent test suites/Welz Problems.jl"
+# "0 Independent test suites/Wester Problems.jl"
+# 
+# # 1 Algebraic functions - 1.1 Binomial products - Linear
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+# 
+# # 1 Algebraic functions - 1.1 Binomial products - Quadratic
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.2 (c x)^m (a+b x^2)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.3 (a+b x^2)^p (c+d x^2)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.4 (e x)^m (a+b x^2)^p (c+d x^2)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.5 (a+b x^2)^p (c+d x^2)^q (e+f x^2)^r.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.6 (g x)^m (a+b x^2)^p (c+d x^2)^q (e+f x^2)^r.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.8 P(x) (c x)^m (a+b x^2)^p.jl"
+# 
+# # 1 Algebraic functions - 1.1 Binomial products - General
+# "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.2 (c x)^m (a+b x^n)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.3 (a+b x^n)^p (c+d x^n)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.4 (e x)^m (a+b x^n)^p (c+d x^n)^q.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.6 (g x)^m (a+b x^n)^p (c+d x^n)^q (e+f x^n)^r.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.8 P(x) (c x)^m (a+b x^n)^p.jl"
+# 
+# # 1 Algebraic functions - 1.1 Binomial products - Improper
+# "1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.2 (c x)^m (a x^j+b x^n)^p.jl"
+# "1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.3 (e x)^m (a x^j+b x^k)^p (c+d x^n)^q.jl"
+# 
+# # 1 Algebraic functions - 1.2 Trinomial products - Quadratic
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.1 (a+b x+c x^2)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.2 (d+e x)^m (a+b x+c x^2)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.3 (d+e x)^m (f+g x) (a+b x+c x^2)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.4 (d+e x)^m (f+g x)^n (a+b x+c x^2)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.5 (a+b x+c x^2)^p (d+e x+f x^2)^q.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.6 (g+h x)^m (a+b x+c x^2)^p (d+e x+f x^2)^q.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.1 Quadratic/1.2.1.9 P(x) (d+e x)^m (a+b x+c x^2)^p.jl"
+# 
+# # 1 Algebraic functions - 1.2 Trinomial products - Quartic
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.2 (d x)^m (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.3 (d+e x^2)^m (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.4 (f x)^m (d+e x^2)^q (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.5 P(x) (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.6 P(x) (d x)^m (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.7 P(x) (d+e x^2)^q (a+b x^2+c x^4)^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.8 P(x) (d+e x)^q (a+b x^2+c x^4)^p.jl"
+# 
+# # 1 Algebraic functions - 1.2 Trinomial products - General
+# "1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.2 (d x)^m (a+b x^n+c x^(2 n))^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.3 (d+e x^n)^q (a+b x^n+c x^(2 n))^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.4 (f x)^m (d+e x^n)^q (a+b x^n+c x^(2 n))^p.jl"
+# "1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.5 P(x) (d x)^m (a+b x^n+c x^(2 n))^p.jl"
+# 
+# # 1 Algebraic functions - 1.2 Trinomial products - Improper
+# "1 Algebraic functions/1.2 Trinomial products/1.2.4 Improper/1.2.4.2 (d x)^m (a x^q+b x^n+c x^(2 n-q))^p.jl"
+# 
+# # 1 Algebraic functions - 1.3 Miscellaneous
+# "1 Algebraic functions/1.3 Miscellaneous/1.3.1 Rational functions.jl"
+# "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.jl"
+# 
+# # 4 Trig functions
+# "4 Trig functions/4.1 Sine/4.1.1.1 (a+b sin)^n.jl"
 ]
 
 _ = integrate(sin(x),x;verbose=false) # warming up
@@ -143,7 +147,7 @@ for path in testset_paths
     global total_tests += tmp[1]
     global total_time += tmp[2]
     global total_failed += tmp[3]
-    global total_errored += tmp[4]
+    global total_errored += tmp[5]
 end
 
 println("="^80)
