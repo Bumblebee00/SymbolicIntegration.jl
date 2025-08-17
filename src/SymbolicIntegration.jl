@@ -81,7 +81,7 @@ VERBOSE = false
 const SILENCE = String[]
 
 all_rules_paths = [
-"9 Miscellaneous/9.1 Integrand simplification rules.jl"
+"9 Miscellaneous/0.1 Integrand simplification rules.jl"
 
 "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.1 (a+b x)^m.jl"
 "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.2 (a+b x)^m (c+d x)^n.jl"
@@ -121,8 +121,8 @@ all_rules_paths = [
 
 # 1.4.1, 1.4.2
 
-# 1.1.1.7
-# 1.1.1.6
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.7 P(x) (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.6 P(x) (a+b x)^m (c+d x)^n (e+f x)^p.jl"
 "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.5 P(x) (a+b x)^m (c+d x)^n.jl"
 
 # 1.2 --- others
