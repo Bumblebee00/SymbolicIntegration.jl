@@ -191,6 +191,12 @@ all_rules_paths = [
 "4 Trig functions/4.3 Tangent/4.3.1.3 (d sin)^m (a+b tan)^n.jl"
 
 "4 Trig functions/4.7 Miscellaneous/4.7.4 (c trig)^m (d trig)^n.jl"
+
+"5 Inverse trig functions/5.1 Inverse sine/5.1.1 (a+b arcsin(c x))^n.jl"
+"5 Inverse trig functions/5.1 Inverse sine/5.1.2 (d x)^m (a+b arcsin(c x))^n.jl"
+
+"5 Inverse trig functions/5.3 Inverse tangent/5.3.1 (a+b arctan(c x^n))^p.jl"
+"5 Inverse trig functions/5.3 Inverse tangent/5.3.2 (d x)^m (a+b arctan(c x^n))^p.jl"
 ]
 
 # ===== Rules loading
