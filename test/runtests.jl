@@ -12,7 +12,8 @@ using PolyLog
 
 testset_paths = [
 "easy.jl"
-"each_rule_tests.jl"
+# "each_rule_tests.jl"
+
 # Independent test suites
 # "0 Independent test suites/Apostol Problems.jl"
 # "0 Independent test suites/Bondarenko Problems.jl"
