@@ -36,6 +36,10 @@ elliptic_pi(nu, m) = Elliptic.Pi(nu, π/2, m)
 using HypergeometricFunctions
 hypergeometric2f1(a, b, c, z) = HypergeometricFunctions._₂F₁(Complex(a), Complex(b), Complex(c), Complex(z))
 @register_symbolic hypergeometric2f1(a, b, c, z)
+
+hypergeometricpFq(a, b, z) = HypergeometricFunctions.pFq(a, b, Complex(z))
+@register_symbolic hypergeometricpFq(a::Vector, b::Vector, z)
+
 appell_f1(a, b, c, d, e, z) = println("AppellF1 function is not implemented yet")
 @register_symbolic appell_f1(a, b, c, d, e, z)
 
@@ -198,11 +202,21 @@ all_rules_paths = [
 
 "4 Trig functions/4.7 Miscellaneous/4.7.4 (c trig)^m (d trig)^n.jl"
 
+
+
+
+
 "5 Inverse trig functions/5.1 Inverse sine/5.1.1 (a+b arcsin(c x))^n.jl"
 "5 Inverse trig functions/5.1 Inverse sine/5.1.2 (d x)^m (a+b arcsin(c x))^n.jl"
 
 "5 Inverse trig functions/5.3 Inverse tangent/5.3.1 (a+b arctan(c x^n))^p.jl"
 "5 Inverse trig functions/5.3 Inverse tangent/5.3.2 (d x)^m (a+b arctan(c x^n))^p.jl"
+
+
+
+
+
+
 
 "7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.1 (a+b arcsinh(c x))^n.jl"
 "7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.2 (d x)^m (a+b arcsinh(c x))^n.jl"
@@ -210,6 +224,13 @@ all_rules_paths = [
 "7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.4 (f x)^m (d+e x^2)^p (a+b arcsinh(c x))^n.jl"
 "7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.5 u (a+b arcsinh(c x))^n.jl"
 "7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.6 Miscellaneous inverse hyperbolic sine.jl"
+
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.1 (a+b arccosh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.2 (d x)^m (a+b arccosh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.3 (d+e x^2)^p (a+b arccosh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.4 (f x)^m (d+e x^2)^p (a+b arccosh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.5 u (a+b arccosh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.6 Miscellaneous inverse hyperbolic cosine.jl"
 ]
 
 # ===== Rules loading
