@@ -124,7 +124,9 @@ all_rules_paths = [
 "1 Algebraic functions/1.2 Trinomial products/1.2.3 General/1.2.3.1 (a+b x^n+c x^(2 n))^p.jl"
 # 1.2.3.2, 1.2.3.3, 1.2.3.4
 
-# 1.1.4.1, 1.1.4.2, 1.1.4.3
+"1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.1 (a x^j+b x^n)^p.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.2 (c x)^m (a x^j+b x^n)^p.jl"
+"1 Algebraic functions/1.1 Binomial products/1.1.4 Improper/1.1.4.3 (e x)^m (a x^j+b x^k)^p (c+d x^n)^q.jl"
 
 # 1.2.4.1, 1.2.4.2, 1.2.4.3, 1.2.4.4
 
