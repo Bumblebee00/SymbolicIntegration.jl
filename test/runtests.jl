@@ -153,7 +153,7 @@ mkpath(test_results_dir)
 
 # Create output file with timestamp
 timestamp = Dates.format(now(), "yyyy-mm-dd_HH-MM-SS")
-output_file = joinpath(test_results_dir, "test_output_$(timestamp).txt")
+output_file = joinpath(test_results_dir, "test_output_$(timestamp).out")
 
 # Get package version
 project_toml = Pkg.project()
