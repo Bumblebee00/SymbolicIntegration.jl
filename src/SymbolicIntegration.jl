@@ -36,7 +36,7 @@ elliptic_pi(nu, m) = Elliptic.Pi(nu, π/2, m)
 using HypergeometricFunctions
 hypergeometric2f1(a, b, c, z) = HypergeometricFunctions._₂F₁(Complex(a), Complex(b), Complex(c), Complex(z))
 @register_symbolic hypergeometric2f1(a, b, c, z)
-appell_f1(a, b, c, d, e, z) = throw("AppellF1 function is not implemented yet")
+appell_f1(a, b, c, d, e, z) = println("AppellF1 function is not implemented yet")
 @register_symbolic appell_f1(a, b, c, d, e, z)
 
 using PolyLog
@@ -45,6 +45,11 @@ using PolyLog
 using FresnelIntegrals
 @register_symbolic FresnelIntegrals.fresnelc(z)
 @register_symbolic FresnelIntegrals.fresnels(z)
+
+sinhintegral(x::Any) = println("hyperbolic sine integral Shi(z) function (https://en.wikipedia.org/wiki/Trigonometric_integral#Hyperbolic_sine_integral) is not implemented yet")
+@register_symbolic sinhintegral(x)
+coshintegral(x::Any) = println("hyperbolic cosine integral Chi(z) function (https://en.wikipedia.org/wiki/Trigonometric_integral#Hyperbolic_cosine_integral) is not implemented yet")
+@register_symbolic coshintegral(x)
 
 
 
@@ -198,6 +203,13 @@ all_rules_paths = [
 
 "5 Inverse trig functions/5.3 Inverse tangent/5.3.1 (a+b arctan(c x^n))^p.jl"
 "5 Inverse trig functions/5.3 Inverse tangent/5.3.2 (d x)^m (a+b arctan(c x^n))^p.jl"
+
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.1 (a+b arcsinh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.2 (d x)^m (a+b arcsinh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.3 (d+e x^2)^p (a+b arcsinh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.4 (f x)^m (d+e x^2)^p (a+b arcsinh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.5 u (a+b arcsinh(c x))^n.jl"
+"7 Inverse hyperbolic functions/7.1 Inverse hyperbolic sine/7.1.6 Miscellaneous inverse hyperbolic sine.jl"
 ]
 
 # ===== Rules loading
