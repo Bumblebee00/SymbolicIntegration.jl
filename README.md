@@ -1,3 +1,6 @@
+(3 + 4*x)^2.2/(1 + 2*x) il coefficiente che moltiplica il risultato fa infinito perché???
+
+
 - [Usage](#usage)
 - [How it works internally](#how-it-works-internally)
 - [Problems](#problems)
@@ -98,7 +101,12 @@ julia> r = @rule (~n)/*(~d) => ~n*ncn(~d)
 julia> r(a*b/(c*x))
 a*b*(c^-1)*(x^-1)
 ```
-creating a power with negative exponent, with `Term` and not with `^`, doesnt autosimplify it to a division with positive exponent. So the rule can be applied
+creating a power with negative exponent, with `Term` and not with `^`, doesnt autosimplify it to a division with positive exponent. So the rule can be applied. But is not good enough. here is a list of expressions not integrating due to this problem
+- log(x) / (x*sqrt(1 + log(x))) rule 3_1_5_36 
+- 1 / (x*sqrt(1 - (x^2))
+- log(1 - t) / (1 - t)
+- (1 + x^2) / x
+
 
 - general rules for trig with F
 
