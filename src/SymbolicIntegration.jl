@@ -231,6 +231,10 @@ all_rules_paths = [
 "7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.4 (f x)^m (d+e x^2)^p (a+b arccosh(c x))^n.jl"
 "7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.5 u (a+b arccosh(c x))^n.jl"
 "7 Inverse hyperbolic functions/7.2 Inverse hyperbolic cosine/7.2.6 Miscellaneous inverse hyperbolic cosine.jl"
+
+"7 Inverse hyperbolic functions/7.3 Inverse hyperbolic tangent/7.3.1 (a+b arctanh(c x^n))^p.jl"
+"7 Inverse hyperbolic functions/7.3 Inverse hyperbolic tangent/7.3.2 (d x)^m (a+b arctanh(c x^n))^p.jl"
+"7 Inverse hyperbolic functions/7.3 Inverse hyperbolic tangent/7.3.3 (d+e x)^m (a+b arctanh(c x^n))^p.jl"
 ]
 
 # ===== Rules loading
