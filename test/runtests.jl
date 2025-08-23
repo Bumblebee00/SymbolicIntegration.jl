@@ -216,7 +216,7 @@ dual_println("="^74*"\n\n\n")
 
 @variables x a b c d e f g h k m n p t z A B C D I
 
-_ = integrate(sin(x)*cos(x),x;verbose=false) # warming up
+_ = integrate(atanh(x),x;verbose=false) # warming up
 
 # analytics for all the testsets
 total_tests = 0
