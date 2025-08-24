@@ -264,6 +264,8 @@ my typical workflow is:
 - - others, see [Common probelms when translating rules](#common-probelms-when-translating-rules)
 - If the problem is quite common in other rules: implement in the translation script and transalte the rule again, otherwise fix it manually in the .jl file
 
+The rules not yet translated are mainly those from sections 4 to 8
+
 ## Common probelms when translating rules
 ### Funciton not translated
 If you encounter a normal function that is not translated by the script, it will stay untranslated, with square brakets, like this:
