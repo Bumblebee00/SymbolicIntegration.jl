@@ -406,7 +406,7 @@ tuples are put into a array, ready to be included by load_rules
 
 # Testing
 
-There is a test suit of ~70k integration problems. Rn they are still in mathematica syntax, and they can be translated into julia with the `testset_translator.jl` script (still experimental). Once they are all transalted, the mathematica syntax ones will be removed. I translated only some of them in julia. To run them, execute in a terminal:
+There is a test suit of several thousands integral taken from the RUBI package, in the folders `test/test_files/0 Independent test suites` and `test/test_files/1 Algebraic functions`. They can be used to test the package running
 ```
 julia --project=. test/runtests.jl
 ```
@@ -420,3 +420,9 @@ julia> using Symbolics, SymbolicIntegration
 julia> include("test/runtests.jl")
 
 ```
+This will create a .out file with the test results. You can select wich testests to test in the script `test/runtests.jl`.
+
+Note that there are also other folders in `test/testset_files`, but they are in mathematica syntax taken from the RUBI repo. They can be translated into julia with the `testset_translator.jl` script:
+
+Usage: `julia translator_of_testset.jl input_file.m [output_file.jl]`
+If output_file is not specified, it will be input_file with .jl extension
