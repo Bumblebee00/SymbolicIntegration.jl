@@ -323,9 +323,30 @@ Int[x_^m_./(a_ + b_. + c_.*x_^4), x_Symbol] := With[{q = Rt[a/c, 2], r = Rt[2*q 
 ```
 #### With syntax
 for each line it first check if there is the With syntax, a syntax in Mathematica
-that enables to define variables in a local scope. If yes finds the defined
-variables and substitute them with their definition. Also there could be conditions
-inside the With block (OddQ in the example), that are bought outside.
+that enables to define variables in a local scope. If yes it can do two things:
+In the new method translates the block using the let syntax, like this:
+```julia
+@rule ∫((~x)^(~!m)/((~a) + (~!b) + (~!c)*(~x)^4),(~x)) =>
+    !contains_var((~a), (~b), (~c), (~x)) &&
+    (
+        !eq((~b)^2 - 4*(~a)*(~c), 0) ||
+        (
+            ge((~m), 3) &&
+            lt((~m), 4)
+        )
+    ) &&
+    neg((~b)^2 - 4*(~a)*(~c)) ?
+let
+    q = rt((~a)⨸(~c), 2)
+    r = rt(2*q - (~b)⨸(~c), 2)
+    
+    ext_isodd(r) ?
+    1⨸(2*(~c)*r)*∫((~x)^((~m) - 3), (~x)) - 1⨸(2*(~c)*r) : nothing
+end : nothing
+```
+The old method was to finds the defined variables and substitute them with their
+definition. Also there could be conditions inside the With block (OddQ in the example),
+that were bought outside.
 ```
 1/(2*c*Rt[2*q - b/c, 2])*Int[x^(m - 3), x] - 1/(2*c*Rt[2*q - b/c, 2])/;  FreeQ[{a, b, c}, x] && (NeQ[b^2 - 4*a*c, 0] || (GeQ[m, 3] && LtQ[m, 4])) && NegQ[b^2 - 4*a*c] &&  OddQ[Rt[2*q - b/c, 2]]
 ```
