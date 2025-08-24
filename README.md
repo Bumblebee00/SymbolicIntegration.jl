@@ -406,7 +406,7 @@ tuples are put into a array, ready to be included by load_rules
 
 # Testing
 
-There is a test suit of several thousands integral taken from the RUBI package, in the folders `test/test_files/0 Independent test suites` and `test/test_files/1 Algebraic functions`. They can be used to test the package running
+There is a test suit of 27585 taken from the RUBI package, in the folders `test/test_files/0 Independent test suites` (1796 tests) and `test/test_files/1 Algebraic functions` (25798 tests). They can be used to test the package running
 ```
 julia --project=. test/runtests.jl
 ```
@@ -426,3 +426,8 @@ Note that there are also other folders in `test/testset_files`, but they are in 
 
 Usage: `julia translator_of_testset.jl input_file.m [output_file.jl]`
 If output_file is not specified, it will be input_file with .jl extension
+
+To count how many tests are there you can use this command:
+```bash
+find "test/test_files/0 Independent test suites" -type f -exec grep -c '^(' {} \; | awk '{sum += $1} END {print "Total matches:", sum}' 
+```
