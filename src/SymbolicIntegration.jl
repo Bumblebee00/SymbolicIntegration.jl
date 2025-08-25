@@ -202,6 +202,12 @@ all_rules_paths = [
 "4 Trig functions/4.3 Tangent/4.3.1.2 (d sec)^m (a+b tan)^n.jl"
 "4 Trig functions/4.3 Tangent/4.3.1.3 (d sin)^m (a+b tan)^n.jl"
 
+"4 Trig functions/4.5 Secant/4.5.1.1 (a+b sec)^n.jl"
+"4 Trig functions/4.5 Secant/4.5.1.2 (d sec)^n (a+b sec)^m.jl"
+"4 Trig functions/4.5 Secant/4.5.1.3 (d sin)^n (a+b sec)^m.jl"
+"4 Trig functions/4.5 Secant/4.5.1.4 (d tan)^n (a+b sec)^m.jl"
+"4 Trig functions/4.5 Secant/4.5.7 (d trig)^m (a+b (c sec)^n)^p.jl"
+
 "4 Trig functions/4.7 Miscellaneous/4.7.4 (c trig)^m (d trig)^n.jl"
 "4 Trig functions/4.7 Miscellaneous/4.7.7 F^(c (a+b x)) trig(d+e x)^n.jl"
 
