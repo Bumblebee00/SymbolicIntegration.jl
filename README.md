@@ -20,7 +20,7 @@
 # SymbolicIntegration
 
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Rules Count](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Bumblebee00/SymbolicIntegration.jl/main/.github/badges/rules-count.json)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
+[![Rules](https://img.shields.io/badge/dynamic/json?url=https://api.github.com/repos/Bumblebee00/SymbolicIntegration.jl/actions/variables/RULES_COUNT&query=$.value&label=rules&color=blue)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
 [![Spell Check](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml)
 
 # Usage
