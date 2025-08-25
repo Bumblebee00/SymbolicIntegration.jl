@@ -1,4 +1,6 @@
 (3 + 4*x)^2.2/(1 + 2*x) il coefficiente che moltiplica il risultato fa infinito perché???
+(~F)[
+SubstFor
 
 
 - [Usage](#usage)
@@ -23,6 +25,7 @@
 # SymbolicIntegration
 
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Rules Count](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Bumblebee00/SymbolicIntegration.jl/main/.github/badges/rules-count.json)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
 
 # Usage
 ```
