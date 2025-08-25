@@ -1,7 +1,3 @@
-(3 + 4*x)^2.2/(1 + 2*x) il coefficiente che moltiplica il risultato fa infinito perché???
-(~F)[
-
-
 - [Usage](#usage)
 - [How it works internally](#how-it-works-internally)
 - [Problems](#problems)
@@ -253,7 +249,21 @@ but the second condition is true only for `200*2 - 1*(-1) = 401 > 0` and not for
 - in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
 - roots of numbers are not treated simbolically but immediatly calcolated. So instead of the beautiful `integrate(1/(sqrt(1+2x)*sqrt(3+4x))) = asinh(sqrt(2)*sqrt(1+2x))/sqrt(2)`, i have ` = 0.7071067811865475asinh(1.414213562373095sqrt(1 + 2x))`. Or instead of `integrate(2^x) = 2^x / log(2)`, i have `integrate(2^x) = 1.4426950408889634*2^x`. Or instead of `integrate((2/sqrt(π))*exp(-x^2)) = SpecialFunctions.erf(x)` I have  `integrate((2/sqrt(π))*exp(-x^2)) = 0.9999999999999999SpecialFunctions.erf(x)`
 - the variable USE_GAMMA is used to choose if gamma function is used in the results or not. But right now is not configurable by the user, and if changed doesnt change the behaviour of th eintegration but a reload_rules() is needed, i dont know why.
+- why here the coefficient is Inf ?
+```
+julia> integrate((3 + 4*x)^2.2/(1 + 2*x))
+No rule found for ∫(((3 + 4x)^2.2) / (1 + 2x), x)
+integration of ∫(((3 + 4x)^2.2) / (1 + 2x), x) failed, trying with this mathematically equivalent integrand:
+∫(((1 + 2x)^-1)*((3 + 4x)^2.2), x)
+┌-------Applied rule 1_1_1_2_37 on ∫(((1 + 2x)^-1)*((3 + 4x)^2.2), x)
+| ∫((a + b * x) ^ (m::!ext_isinteger) * (c + d * x) ^ (n::ext_isinteger), x) => if 
+|       !(contains_var(a, b, c, d, m, x)) &&
+|       !(eq(b * c - a * d, 0))
+| (((b * c - a * d) ^ n * (a + b * x) ^ (m + 1)) / (b ^ (n + 1) * (m + 1))) * hypergeometric2f1(-n, m + 1, m + 2, (-d * (a + b * x)) / (b * c - a * d))
+└-------with result: Inf*SymbolicIntegration.hypergeometric2f1(-2.2, 0, 1, (-2//1)*(1 + 2x))
+Inf*SymbolicIntegration.hypergeometric2f1(-2.2, 0, 1, (-2//1)*(1 + 2x))
 
+```
 # Contributing
 In this repo there is also some software that serves the sole purpose of helping with the translation of rules from Mathematica syntax, and not for the actual package working. The important ones are:
 - translator_of_rules.jl is a script that with regex and other string manipulations translates from Mathematica syntax to julia syntax
