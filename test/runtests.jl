@@ -100,6 +100,8 @@ function test_from_file(path)
     dual_println("Loading tests from ", relpath(path), "...")
     include(path)
     # Note: file_tests is a array defined in the included file
+    # Use Base.invokelatest to handle world age issues
+    file_tests = Base.invokelatest(() -> Main.file_tests)
     dual_println("Testing ", length(file_tests), " integrals...")
 
     succeeded = 0
