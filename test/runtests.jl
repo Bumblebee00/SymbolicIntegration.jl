@@ -4,7 +4,7 @@ using Test
 using Symbolics
 using SymbolicIntegration
 
-# for sepcial functions:
+# for special functions:
 using Elliptic
 using HypergeometricFunctions
 using PolyLog
@@ -99,7 +99,7 @@ function test_from_file(path)
 
     dual_println("Loading tests from ", relpath(path), "...")
     include(path)
-    # Note: file_tests is a array definied in the included file
+    # Note: file_tests is a array defined in the included file
     dual_println("Testing ", length(file_tests), " integrals...")
 
     succeeded = 0

@@ -6,9 +6,9 @@ using Polynomials # TODO maybe implement division without using this package? fo
 
 
 # ===== Special functions from a lot of packages
-# TODO maybe transform all these imports to pakage extensions? so they dont get imported if not needed?
+# TODO maybe transform all these imports to package extensions? so they dont get imported if not needed?
 
-# function from SpecialFunctions.jl that are not yet registerd
+# function from SpecialFunctions.jl that are not yet registered
 @register_symbolic SymbolicUtils.expinti(x)
 @register_symbolic SymbolicUtils.expint(nu, z)
 @register_symbolic SymbolicUtils.gamma(x, y)
@@ -26,7 +26,7 @@ using Elliptic
 @register_symbolic Elliptic.E(m) false # complete second kind
 @register_symbolic Elliptic.Pi(nu, phi, m) # incomplete third kind
 
-# changing name bc the . does no good in translation scritpt
+# changing name bc the . does no good in translation script
 elliptic_f(phi, m) = Elliptic.F(phi, m)
 elliptic_e(m) = Elliptic.E(m)
 elliptic_e(phi, m) = Elliptic.E(phi, m)

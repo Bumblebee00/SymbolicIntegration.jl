@@ -9,7 +9,7 @@
       - [another example](#another-example)
   - [Minor](#minor)
 - [Contributing](#contributing)
-  - [Common probelms when translating rules](#common-probelms-when-translating-rules)
+  - [Common problems when translating rules](#common-problems-when-translating-rules)
   - [Description of the script `src/translator_of_rules.jl`](#description-of-the-script-srctranslator_of_rulesjl)
 - [Testing](#testing)
   - [Testing other packages](#testing-other-packages)
@@ -68,7 +68,7 @@ first argument is the expression to integrate, second argument is the variable o
 The load time of the package is quite big, it takes time to create all rules. On a macboockair m1 it does approx 750 rules/min, so ~4 min to load all the rules.
 
 # How it works internally
-This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica package [RUBI](https://rulebasedintegration.org/). The rules are definied using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
+This package uses a rule based approach to integrate a vast class of functions, and it's built using the rules from the Mathematica package [RUBI](https://rulebasedintegration.org/). The rules are defined using the SymbolicUtils [rule macro](https://symbolicutils.juliasymbolics.org/rewrite/#rule-based_rewriting) and are of this form:
 ```julia
 # rule 1_1_1_1_2
 @rule ∫((~x)^(~!m),(~x)) =>
@@ -76,18 +76,18 @@ This package uses a rule based approach to integrate a vast class of functions, 
     !eq((~m), -1) ?
 (~x)^((~m) + 1)⨸((~m) + 1) : nothing
 ```
-The rule left hand side pattern is the symbolic function `∫(var1, var2)` where first variable is the integrand and second is the integration variable. After the => there are some conditions to determine if the rules are applicable, and after the ? there is the transformation. Note that this may still contain a integral, so a walk in pre order of the tree representing the symbolic expression is done, applying rules to each node containg the integral.
+The rule left hand side pattern is the symbolic function `∫(var1, var2)` where first variable is the integrand and second is the integration variable. After the => there are some conditions to determine if the rules are applicable, and after the ? there is the transformation. Note that this may still contain a integral, so a walk in pre order of the tree representing the symbolic expression is done, applying rules to each node containing the integral.
 
-The infix operator `⨸` is used to represent a custom division function, if called on integers returns a rational and if called on floats returns a float. This is done because // operator does not support floats. This specific charachter was chosen because it resembles the division symbol and because it has the same precedence as /.
+The infix operator `⨸` is used to represent a custom division function, if called on integers returns a rational and if called on floats returns a float. This is done because // operator does not support floats. This specific character was chosen because it resembles the division symbol and because it has the same precedence as /.
 
 Not all rules are yet translated, I am each day translating more of them. If you want to know how read the section [contributing](#contributing). If you enconunter any issues using the package, please write me or open a issue on the repo.
 
 # Problems
 ## Serious
-Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountred so far:
+Serious problems are problems that strongly impact the correct functioning of the rule based symbolic integrator and are difficult to fix. Here are the ones i encountered so far:
 ### neim problem
 neim stands for negative exponents in multiplications
-If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instad, searches for a * as first operation, and thus doesn't recognize the expression. For this reason `(1 + 3x)^2 / (1 + 2x))`, `(x^6) / (1 + 2(x^6))` and many other expressions dont get integrated.
+If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (~!d)*(~x))^(~n)~))` it can correctly match something like `(1+2x)^2 * (3+4x)^3`. But when one of the two exponents is negative, let's say -3, this expression is represented in julia as `(1+2x)^2 / (3+4x)^3)`. Or when both are negative, the expression is represented as `1 / ( (1+2x)^2 * (3+4x)^3 )`. The matcher inside the rule instead, searches for a * as first operation, and thus doesn't recognize the expression. For this reason `(1 + 3x)^2 / (1 + 2x))`, `(x^6) / (1 + 2(x^6))` and many other expressions dont get integrated.
 
 A workaround I implemented is this:
 ```
@@ -110,9 +110,9 @@ creating a power with negative exponent, with `Term` and not with `^`, doesnt au
 - general rules for trig with F
 
 ## Mild
-Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountred so far:
+Mild problems are problems that impact the correct functioning of the rule based symbolic integrator and are medium difficulty to fix. Here are the ones I encountered so far:
 
-- In the Mathematica package is definied the `ExpandIntegrand` funciton that expands a lot of mathematical expression (is definied in more than 360 rules of code) in strange ways. Not all cases are been adderssed for now
+- In the Mathematica package is defined the `ExpandIntegrand` function that expands a lot of mathematical expression (is defined in more than 360 rules of code) in strange ways. Not all cases are been adderssed for now
 
 - when testing, one checks that the integral is correct with `isequal(simplify(computed_result  - real_result;expand=true), 0)` but this doesnt always work. For example:
 ```
@@ -141,7 +141,7 @@ julia> r(1-c*x)
 ```
 because -c*x is represented as a three factor moltiplication between -1, c and x
 
-- integrals with complex numers dont work very well
+- integrals with complex numbers dont work very well
 
 ### mild problem: oooomm
 oooomm stands for only one out of multiple matches.
@@ -234,7 +234,7 @@ This is because in this new expression the matches are
 so the rule returns but then the condition `linear(x, a)` fails
 
 #### another example
-`1/(sqrt(1+200x)*sqrt(2-x))` shoud integrate with the rule
+`1/(sqrt(1+200x)*sqrt(2-x))` should integrate with the rule
 ```
 ("1_1_1_2_23",
 @rule ∫(1/(sqrt((~!a) + (~!b)*(~x))*sqrt((~!c) + (~!d)*(~x))),(~x)) =>
@@ -246,8 +246,8 @@ so the rule returns but then the condition `linear(x, a)` fails
 but the second condition is true only for `200*2 - 1*(-1) = 401 > 0` and not for `(-1)*1 - 2*200 = -401 not > 0`
 
 ## Minor
-- in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically transalted into exp(x) like happens in the REPL
-- roots of numbers are not treated simbolically but immediatly calcolated. So instead of the beautiful `integrate(1/(sqrt(1+2x)*sqrt(3+4x))) = asinh(sqrt(2)*sqrt(1+2x))/sqrt(2)`, i have ` = 0.7071067811865475asinh(1.414213562373095sqrt(1 + 2x))`. Or instead of `integrate(2^x) = 2^x / log(2)`, i have `integrate(2^x) = 1.4426950408889634*2^x`. Or instead of `integrate((2/sqrt(π))*exp(-x^2)) = SpecialFunctions.erf(x)` I have  `integrate((2/sqrt(π))*exp(-x^2)) = 0.9999999999999999SpecialFunctions.erf(x)`
+- in runtests, exp(x) is not recognized as ℯ^x. This is because integration produces a ℯ^x that doesnt get automatically translated into exp(x) like happens in the REPL
+- roots of numbers are not treated simbolically but immediately calculated. So instead of the beautiful `integrate(1/(sqrt(1+2x)*sqrt(3+4x))) = asinh(sqrt(2)*sqrt(1+2x))/sqrt(2)`, i have ` = 0.7071067811865475asinh(1.414213562373095sqrt(1 + 2x))`. Or instead of `integrate(2^x) = 2^x / log(2)`, i have `integrate(2^x) = 1.4426950408889634*2^x`. Or instead of `integrate((2/sqrt(π))*exp(-x^2)) = SpecialFunctions.erf(x)` I have  `integrate((2/sqrt(π))*exp(-x^2)) = 0.9999999999999999SpecialFunctions.erf(x)`
 - the variable USE_GAMMA is used to choose if gamma function is used in the results or not. But right now is not configurable by the user, and if changed doesnt change the behaviour of th eintegration but a reload_rules() is needed, i dont know why.
 - why here the coefficient is Inf ?
 ```
@@ -268,20 +268,20 @@ Inf*SymbolicIntegration.hypergeometric2f1(-2.2, 0, 1, (-2//1)*(1 + 2x))
 In this repo there is also some software that serves the sole purpose of helping with the translation of rules from Mathematica syntax, and not for the actual package working. The important ones are:
 - translator_of_rules.jl is a script that with regex and other string manipulations translates from Mathematica syntax to julia syntax
 - translator_of_testset.jl is a script that translates the testsets into julia syntax (much simpler than translator_of_rules.jl)
-- `reload_rules` function in rules_loader.jl. When developing the package using Revise is not enough because rules are definied with a macro. So this function reloads rules from a specific .jl file or from all files if called without arguments.
+- `reload_rules` function in rules_loader.jl. When developing the package using Revise is not enough because rules are defined with a macro. So this function reloads rules from a specific .jl file or from all files if called without arguments.
 
 my typical workflow is:
 - translate a rule file with translator_of_rules.jl. In the resulting file there could be some problems:
 - - maybe a Mathematica function that i never encountered before and therefore not included in the translation script (and in rules_utility_functions.jl)
 - - maybe a Mathematica syntax that I never encountered before and not included in the translation script
-- - others, see [Common probelms when translating rules](#common-probelms-when-translating-rules)
-- If the problem is quite common in other rules: implement in the translation script and transalte the rule again, otherwise fix it manually in the .jl file
+- - others, see [Common problems when translating rules](#common-problems-when-translating-rules)
+- If the problem is quite common in other rules: implement in the translation script and translate the rule again, otherwise fix it manually in the .jl file
 
 The rules not yet translated are mainly those from sections 4 to 8
 
-## Common probelms when translating rules
-### Funciton not translated
-If you encounter a normal function that is not translated by the script, it will stay untranslated, with square brakets, like this:
+## Common problems when translating rules
+### function not translated
+If you encounter a normal function that is not translated by the script, it will stay untranslated, with square brackets, like this:
 ```
 sqrt(Sign[(~b)]*sin((~e) + (~f)*(~x)))⨸sqrt((~d)*sin((~e) + (~f)*(~x)))* ∫(1⨸(sqrt((~a) + (~b)*sin((~e) + (~f)*(~x)))*sqrt(Sign[(~b)]*sin((~e) + (~f)*(~x)))), (~x)) : nothing)
 ```
@@ -292,7 +292,7 @@ the `Sum[...]` function gets translated with this regex:
 ```
 (r"Sum\[(.*?),\s*\{(.*?),(.*?),(.*?)\}\]", s"sum([\1 for \2 in (\3):(\4)])"), 
 ```
-its quite common that the \1 is a <=2 letter variable, and so will get translated from the translator into a slot vairable, appending ~.
+its quite common that the \1 is a <=2 letter variable, and so will get translated from the translator into a slot variable, appending ~.
 
 For example
 ```
@@ -378,8 +378,8 @@ FreeQ[{a, b, c}, x] && (NeQ[b^2 - 4*a*c, 0] || (GeQ[m, 3] && LtQ[m, 4])) && NegQ
 ```
 
 Each one of them is translated using the appropriate function, but the three
-all work the same. They first apply a numebr of times the smart_replace function,
-that replaces functions names without messing the nested brakets (like normal regex do)
+all work the same. They first apply a number of times the smart_replace function,
+that replaces functions names without messing the nested brackets (like normal regex do)
 ```
 smart_replace("ArcTan[Rt[b, 2]*x/Rt[a, 2]] + Log[x]", "ArcTan", "atan")
 # output
@@ -393,7 +393,7 @@ Mathematica you can reference the slot variables without any prefix, and in
 julia you need ~.
 
 #### Pretty indentation
-Then they are all put togheter following the julia rules syntax
+Then they are all put together following the julia rules syntax
 @rule integrand => conditions ? result : nothing
 ```
 @rule ∫((~x)^(~!m)/((~a) + (~!b) + (~!c)*(~x)^4),(~x)) => !contains_var((~a), (~b), (~c), (~x)) && (!eq((~b)^2 - 4*(~a)*(~c), 0) || (ge((~m), 3) && lt((~m), 4))) && neg((~b)^2 - 4*(~a)*(~c)) && ext_isodd(rt(2*(~q) - (~b)/(~c), 2)) ? 1⨸(2*(~c)*rt(2*(~q) - (~b)⨸(~c), 2))*∫((~x)^((~m) - 3), (~x)) - 1⨸(2*(~c)*rt(2*(~q) - (~b)⨸(~c), 2)) : nothing
@@ -435,7 +435,7 @@ julia> using Symbolics, SymbolicIntegration
 julia> include("test/runtests.jl")
 
 ```
-This will create a .out file with the test results. You can select wich testests to test in the script `test/runtests.jl`.
+This will create a .out file with the test results. You can select which testests to test in the script `test/runtests.jl`.
 
 Note that there are also other folders in `test/testset_files`, but they are in mathematica syntax taken from the RUBI repo. They can be translated into julia with the `testset_translator.jl` script:
 
