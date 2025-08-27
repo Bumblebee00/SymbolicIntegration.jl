@@ -91,11 +91,11 @@ If I define a rule with this pattern `@rule ((~!a) + (~!b)*(~x))^(~m)*((~!c) + (
 
 A workaround I implemented is this:
 ```
-julia> ncn(expr) = SymbolicUtils.Term{Number}(^,[expr,-1])
-ncn (generic function with 1 method)
+julia> ins(expr) = SymbolicUtils.Term{Number}(^,[expr,-1])
+ins (generic function with 1 method)
 
-julia> r = @rule (~n)/*(~d) => ~n*ncn(~d)
-~n / (*)(~(~d)) => ~n * prod([ncn(el) for el = ~(~d)])
+julia> r = @rule (~n)/*(~d) => ~n*ins(~d)
+~n / (*)(~(~d)) => ~n * prod([ins(el) for el = ~(~d)])
 
 julia> r(a*b/(c*x))
 a*b*(c^-1)*(x^-1)
