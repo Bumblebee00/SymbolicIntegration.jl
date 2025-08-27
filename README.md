@@ -1,3 +1,9 @@
+# SymbolicIntegration
+
+[![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Rules](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/Bumblebee00/SymbolicIntegration.jl/main/.github/badges/rules-count.json&query=$.message&label=Total%20rules&color=blue)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
+[![Spell Check](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml)
+
 - [Usage](#usage)
 - [How it works internally](#how-it-works-internally)
 - [Problems](#problems)
@@ -15,13 +21,6 @@
   - [Testing other packages](#testing-other-packages)
     - [SymbolicNumericIntegration.jl](#symbolicnumericintegrationjl)
     - [SymPy.jl](#sympyjl)
-
-
-# SymbolicIntegration
-
-[![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Rules](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/Bumblebee00/SymbolicIntegration.jl/main/.github/badges/rules-count.json&query=$.message&label=Total%20rules&color=blue)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
-[![Spell Check](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml)
 
 # Usage
 ```

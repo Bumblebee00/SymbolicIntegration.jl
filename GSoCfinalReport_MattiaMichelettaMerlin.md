@@ -110,7 +110,7 @@ and much more. I also added 27585 tests (integrals with their correct solution) 
 While this shows impressive integration capabilities, there is still work left to do, which I briefly list here and describe in detail below.
 - First, there are still some problems with the SymbolicUtils `@rule` macro that prevent some expressions from being integrated even though the rules are present.
 - There are still some rules not translated, mainly those involving trigonometric functions, hyperbolic functions, and special functions. 
-- Finally, during the summer, a Julia package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I thus need to move all my code to that repository, the pr is underway: [pr](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/11).
+- Finally, during the summer, a Julia package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I thus need to move all my code to that repository, the pr is underway: [pr](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/12).
 
 # Detailed report of work done
 Here is a detailed report of the work done with links to code and pull requests (pr), if you really want to deep dive in the technical details. The code I have written is mainly in this repo, SymbolicIntegration.jl, and in the SymbolicUtils.jl repo where I improved the `@rule` macro.
@@ -306,4 +306,4 @@ The problems holding back the most number of expressions to be integrated are:
 
 While other things left to do are:
 - **Decrease loading time**: The first time you import the package in the Julia REPL with `using SymbolicIntegration.jl` it takes a while (roughly 5 min on a laptop) to create all the callable objects with the `@rule macro`. This could be solved by improving the `@rule macro`.
-- **Add to JuliaSymbolics/SymbolicIntegration.jl**: during the summer, a package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I need thus to move all my code to that repo, the pr is underway: [pr](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/11).
+- **Add to JuliaSymbolics/SymbolicIntegration.jl**: during the summer, a package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I need thus to move all my code to that repo, the pr is underway: [pr](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/12).
