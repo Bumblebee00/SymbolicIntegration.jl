@@ -4,23 +4,19 @@
 [![Rules](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/Bumblebee00/SymbolicIntegration.jl/main/.github/badges/rules-count.json&query=$.message&label=Total%20rules&color=blue)](https://github.com/Bumblebee00/SymbolicIntegration.jl)
 [![Spell Check](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/spellcheck.yml)
 
+- [SymbolicIntegration](#symbolicintegration)
 - [Usage](#usage)
 - [How it works internally](#how-it-works-internally)
 - [Problems](#problems)
   - [Serious](#serious)
-    - [neim problem](#neim-problem)
   - [Mild](#mild)
-    - [mild problem: oooomm](#mild-problem-oooomm)
-      - [Example in intgeration](#example-in-intgeration)
-      - [another example](#another-example)
   - [Minor](#minor)
 - [Contributing](#contributing)
   - [Common problems when translating rules](#common-problems-when-translating-rules)
   - [Description of the script `src/translator_of_rules.jl`](#description-of-the-script-srctranslator_of_rulesjl)
+    - [How to use it](#how-to-use-it)
+    - [How it works internally (useful to know if you have to debug it)](#how-it-works-internally-useful-to-know-if-you-have-to-debug-it)
 - [Testing](#testing)
-  - [Testing other packages](#testing-other-packages)
-    - [SymbolicNumericIntegration.jl](#symbolicnumericintegrationjl)
-    - [SymPy.jl](#sympyjl)
 
 # Usage
 ```
