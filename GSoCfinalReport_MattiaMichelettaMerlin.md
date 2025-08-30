@@ -16,20 +16,20 @@ If you are in a hurry, read only the Project Overview section, and you should ha
 # Project Overview
 
 - **GSoC Participant:** [Mattia Micheletta Merlin](https://mmm3.it/)
-- **Organization:** [NumFOCUS](https://numfocus.org/sponsored-projects) (under Julia [SciML](https://sciml.ai/) umbrella)
+- **Organization:** Julia [SciML](https://sciml.ai/) (under [NumFOCUS](https://numfocus.org/sponsored-projects) umbrella)
 - **Mentors:** Aayush Sabharwal, Chris Rackauckas
 - **Project in one sentence:** Rule-based symbolic integration in Julia
 
-This project aimed to implement symbolic integration (i.e. finding primitives of functions, not numerical integration) in Symbolics.jl, the Julia package for symbolic manipulation. The chosen algorithm was rule-based integration, which uses a large number of integration rules that specify how to integrate various expressions. I chose this strategy thanks to the [Mathematica](https://www.wolfram.com/mathematica/) package [RUBI](https://rulebasedintegration.org/), which already contains more than 6000 integration rules and is open source.
+With this project I implemented symbolic integration (i.e. finding primitives of functions, not numerical integration) in [Symbolics.jl](https://docs.sciml.ai/Symbolics/stable/), the Julia package for symbolic manipulation. The chosen algorithm was rule-based integration, which uses a large number of integration rules that specify how to integrate various mathematical expressions. I chose this strategy thanks to the [Mathematica](https://www.wolfram.com/mathematica/) package [RUBI](https://rulebasedintegration.org/), which already contains more than 6000 integration rules and is open source.
 
 The main challenges I encountered were:
-- **Rule translation:** The rules are written in Mathematica files with Mathematica syntax (very different from Julia syntax). I tackled this challenge by creating a translator script that automatically translates the rules into Julia syntax using regex and other string manipulation functions that I wrote. It's described in detail in the sections below
+- **Translation of integration rules:** The integration rules are written in Mathematica syntax (very different from Julia syntax). I tackled this challenge by creating a translator script that automatically translates them into Julia syntax using regexes and other fancy string manipulation functions that I wrote (it's described in detail in the sections below). Even with this script, I had to manually test the rules and this was time conusming.
 
-- **Utility functions:** There are many rules in RUBI, but also many utility functions used in the rule conditions, including both base Mathematica functions and custom functions made for the RUBI package (the file where they are defined contains 7842 lines of code). The translation of these could not be automated, so I had to: 1) understand what each utility function did (not always easy) and 2) rewrite it in Julia.
+- **Utility functions:** There are many integration rules in RUBI, but also many utility functions used in the rule conditions, including both base Mathematica functions (usually not present in Symbolics.jl) and custom functions made for the RUBI package (the file where they are defined contains 7842 lines of code). The translation of these could not be automated and was a lot time consumning and error prone as I had to both understand what each utility function did (not always easy), rewrite it in Julia, and test its behaviour with lots of different rules.
 
-- **Rule application:** Julia's Symbolics.jl already had a pattern matching functionality, with the `@rule` macro, but it was not sufficient for symbolic integration to work well, so I improved it. There was not one single big improvement but many small ones, described in detail in the sections below.
+- **Rule application:** Julia's Symbolics.jl already had a pattern matching functionality, with the `@rule` macro, but it was not sufficiently good for this package to work well, so I improved it. There was not one single big improvement but many small ones, described in detail in the sections below.
 
-As of september 2025, end of GSoC, I translated 3000+ rules from 90+ files and the system can integrate a vast class of expressions, involving normal algebraic functions
+As of september 2025, end of GSoC, I translated more than 3400 rules and the system can integrate a vast class of expressions, involving normal algebraic functions:
 ```julia
 julia> integrate(sqrt(4 - 12*x + 9*x^2)+sqrt(1+x),x)
 ┌-------Applied rule 0_1_0 on ∫(sqrt(1 + x) + sqrt(4 - 12x + 9(x^2)), x)
@@ -58,7 +58,7 @@ julia> integrate((2+2x+2x^2)/(1+x^3);verbose=false)
 julia> integrate((1 - x)^2*(1 + x)^(2.34);verbose=false)
 1.1976047904191618((1 + x)^3.34) - 0.9216589861751152((1 + x)^4.34) + 0.18726591760299627((1 + x)^5.34)
 ```
-also symbolic ones
+also symbolic ones:
 ```julia
 julia> integrate(1/(a+b*x^2),x;verbose=false)
 (atan(x / sqrt(a / b))*sqrt(a / b)) / a
@@ -66,7 +66,7 @@ julia> integrate(1/(a+b*x^2),x;verbose=false)
 julia> integrate(x^2/(1+a*x^3),x;verbose=false)
 log(1 + a*(x^3)) / (3a)
 ```
-exponentials
+exponentials:
 ```julia
 julia> integrate(exp(x)/(exp(2x)-1);verbose=false)
 -atanh(exp(x))
@@ -74,7 +74,7 @@ julia> integrate(exp(x)/(exp(2x)-1);verbose=false)
 julia> integrate(sqrt(x)*exp(x);verbose=false)
 -0.8862269254527579SpecialFunctions.erfi(sqrt(x)) + sqrt(x)*exp(x)
 ```
-logarithms
+logarithms:
 ```julia
 julia> integrate(log(x)*x;verbose=false)
 -(1//4)*(x^2) + (1//2)*(x^2)*log(x)
@@ -85,7 +85,7 @@ julia> integrate(log(x)/sqrt(x);verbose=false)
 julia> integrate(log(log(x));verbose=false)
 -SpecialFunctions.expinti(log(x)) + x*log(log(x))
 ```
-trigonometric functions
+trigonometric functions:
 ```julia
 julia> integrate(sin(x)^3*cos(x)^2;verbose=false)
 -(1//3)*(cos(x)^3) + (1//5)*(cos(x)^5)
@@ -105,12 +105,12 @@ julia> integrate(sin(x^2)/x;verbose=false)
 julia> integrate(acosh(x+1);verbose=false)
 (1 + x)*acosh(1 + x) - sqrt(x)*sqrt(2 + x)
 ```
-and much more. I also added 27585 tests (integrals with their correct solution) from the RUBI package that can be used to test the package.
+and much more. I also added 27585 tests (integrals with their correct solution) from the RUBI package and an automated testing procedure that can be used to test the package.
 
 While this shows impressive integration capabilities, there is still work left to do, which I briefly list here and describe in detail below.
-- First, there are still some problems with the SymbolicUtils `@rule` macro that prevent some expressions from being integrated even though the rules are present.
-- There are still some rules not translated, mainly those involving trigonometric functions, hyperbolic functions, and special functions. 
-- Finally, during the summer, a Julia package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I thus need to move all my code to that repository, the pr is underway: [pr](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/12).
+- Most importantly, there are still some problems with the SymbolicUtils `@rule` macro that prevent some expressions from being integrated even though the rules are present, and that slow down the package.
+- There are still some rules not translated, mainly those involving trigonometric functions, hyperbolic functions, and special functions.
+- Finally, during the summer, a Julia package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I thus need to move all my code to that repository, the [pull request](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/12) is underway.
 
 # Detailed report of work done
 Here is a detailed report of the work done with links to code and pull requests (pr), if you really want to deep dive in the technical details. The code I have written is mainly in this repo, SymbolicIntegration.jl, and in the SymbolicUtils.jl repo where I improved the `@rule` macro.
@@ -123,6 +123,7 @@ added DefSlots | [pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/74
 added commutative checks, <br> negative exponent matching, <br> `sqrt` and `exp` support <br> and new simplify behaviour (yes, all in one pr) | [pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/752)
 return matches dictionary | [pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/774)
 sped up rules | [pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/779)
+documentation | [pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/783)
 
 
 ### Defslot
@@ -179,7 +180,7 @@ julia> arguments(sin(a)+cos(a))
 In the second case, it differs from the one defined in the rule (sin first, then cos). So I made the operations `+` and `*` commutative in rules.
 
 ### Negative Exponent Support
-Previously, a rule like `(~x)^(~m)` didn't match an expression like `1/x^3` with `~m=-3`, and this was crucial for the correct functioning of my package. So I changed this behavior, and now exponents can match divisions using a negative value as the exponent.
+Previously, a rule like `(~x)^(~m)` didn't match an expression like `1/x^3` with `~m=-3`, and this was crucial for the correct functioning of my package. So I changed this behavior, and now exponents can match divisions using a negative value as the exponent. This was trickier than it seems, because a division in SymbolicUtils can be represented in many ways:  `(1/...)^(...))`, `1/(...)^(...)`, `1/(...)`, `(...)/(...)` and in fact in some rare cases this is still not working properly (read neim problem section below).
 
 ### Other Minor Enhancements
 
