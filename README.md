@@ -312,8 +312,8 @@ sum([∫(1⨸(1 - sin((~e) + (~f)*(~x))^2⨸((-1)^(4*iii⨸(~n))*rt(-(~a)⨸(~b)
 ### Module syntax translation
 The `Module` Syntax is similar to the `With` syntax, but a bit different and for now is not handled by the script
 
-### * not present or present as \[Star]
-in Mathematica if you write `a b` or `a \[Star] b` is interpreted as `a*b`. So sometimes in the rules is written like that. When it happens i usually add the * in the mathematica file,  and then i translate it
+### * not present or present as \\[Star]
+in Mathematica if you write `a b` or `a \[Star] b` is interpreted as `a*b`. So sometimes in the rules is written like that. When it happens i usually add manually the * in the mathematica file,  and then i translate it
 
 ## Description of the script `src/translator_of_rules.jl`
 This script is used to translate integration rules from Mathematica syntax
@@ -356,7 +356,7 @@ end : nothing
 ```
 The old method was to finds the defined variables and substitute them with their
 definition. Also there could be conditions inside the With block (OddQ in the example),
-that were bought outside.
+that were bought outside. This is not done anymore.
 ```
 1/(2*c*Rt[2*q - b/c, 2])*Int[x^(m - 3), x] - 1/(2*c*Rt[2*q - b/c, 2])/;  FreeQ[{a, b, c}, x] && (NeQ[b^2 - 4*a*c, 0] || (GeQ[m, 3] && LtQ[m, 4])) && NegQ[b^2 - 4*a*c] &&  OddQ[Rt[2*q - b/c, 2]]
 ```
@@ -409,10 +409,10 @@ applied automatically that rewrites the rule like this:
     ext_isodd(rt(2*(~q) - (~b)/(~c), 2)) ?
 1⨸(2*(~c)*rt(2*(~q) - (~b)⨸(~c), 2))*∫((~x)^((~m) - 3), (~x)) - 1⨸(2*(~c)*rt(2*(~q) - (~b)⨸(~c), 2)) : nothing
 ```
+and this is pretty cool
 
 #### end
-finally the rule is placed in a tuple (index, rule), and all the
-tuples are put into a array, ready to be included by load_rules
+finally the rule is placed in a tuple (index, rule), and all the tuples are put into a array, ready to be included by the function load_rules
 
 # Testing
 
