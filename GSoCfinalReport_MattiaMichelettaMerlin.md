@@ -33,24 +33,25 @@ As of september 2025, end of GSoC, I translated more than 3400 rules and the sys
 ```julia
 julia> integrate(sqrt(4 - 12*x + 9*x^2)+sqrt(1+x),x)
 ┌-------Applied rule 0_1_0 on ∫(sqrt(1 + x) + sqrt(4 - 12x + 9(x^2)), x)
-| ∫( +(a...), x) => sum([ ∫(f, x) for f in a ])
+| ∫( a + b + ..., x) => ∫(a,x) + ∫(b,x) + ...
 └-------with result: ∫(sqrt(4 - 12x + 9(x^2)), x) + ∫(sqrt(1 + x), x)
 ┌-------Applied rule 1_1_1_1_4 on ∫(sqrt(1 + x), x)
 | ∫((a + b * x) ^ m, x) => if 
 |       !(contains_var(a, b, m, x)) &&
-|       !(eq(m, -1))
+|       m !== -1
 | (a + b * x) ^ (m + 1) / (b * (m + 1))
 └-------with result: (2//3)*((1 + x)^(3//2))
 ┌-------Applied rule 1_2_1_1_3 on ∫(sqrt(4 - 12x + 9(x^2)), x)
 | ∫((a + b * x + c * x ^ 2) ^ p, x) => if 
 |       !(contains_var(a, b, c, p, x)) &&
 |       (
-|             eq(b ^ 2 - 4 * a * c, 0) &&
-|             !(eq(p, -1 / 2))
+|             b ^ 2 - 4 * a * c == 0 &&
+|             p !== -1 / 2
 |       )
 | ((b + 2 * c * x) * (a + b * x + c * x ^ 2) ^ p) / (2 * c * (2 * p + 1))
 └-------with result: (1//36)*(-12 + 18x)*((4 - 12x + 9(x^2))^(1//2))
 (2//3)*((1 + x)^(3//2)) + (1//36)*(-12 + 18x)*sqrt(4 - 12x + 9(x^2))
+
 
 julia> integrate((2+2x+2x^2)/(1+x^3);verbose=false)
 (2//3)*log(1 + x^3) + 2.3094010767585034atan(0.14433756729740646(-4 + 8x))
@@ -108,7 +109,7 @@ julia> integrate(acosh(x+1);verbose=false)
 and much more. I also added 27585 tests (integrals with their correct solution) from the RUBI package and an automated testing procedure that can be used to test the package.
 
 While this shows impressive integration capabilities, there is still work left to do, which I briefly list here and describe in detail below.
-- Most importantly, there are still some problems with the SymbolicUtils `@rule` macro that prevent some expressions from being integrated even though the rules are present, and that slow down the package.
+- Most importantly, there are still some problems with the SymbolicUtils `@rule` macro that prevent some expressions from being integrated even though the rules are present, and that slows down the package.
 - There are still some rules not translated, mainly those involving trigonometric functions, hyperbolic functions, and special functions.
 - Finally, during the summer, a Julia package has been revived that performs symbolic integration using various algorithms, and we decided to create one unified package where the user can choose which integration strategy to use. I thus need to move all my code to that repository, the [pull request](https://github.com/JuliaSymbolics/SymbolicIntegration.jl/pull/12) is underway.
 
@@ -156,11 +157,10 @@ julia> r = @rule sin(~x) + cos(~x) => 1
 sin(~x) + cos(~x) => 1
 
 julia> r(sin(x)+cos(x))
-1
+# no result = rule not applied
 
 julia> r(sin(a)+cos(a))
-# rule not applied
-
+1
 ```
 
 This occurs because the ordering of the arguments of the `+` operation is different in the two expressions:
@@ -168,19 +168,19 @@ This occurs because the ordering of the arguments of the `+` operation is differ
 ```julia
 julia> arguments(sin(x)+cos(x))
 2-element SymbolicUtils.SmallVec{Any, Vector{Any}}:
- sin(x)
  cos(x)
+ sin(x)
 
 julia> arguments(sin(a)+cos(a))
 2-element SymbolicUtils.SmallVec{Any, Vector{Any}}:
- cos(a)
  sin(a)
+ cos(a)
 ```
 
-In the second case, it differs from the one defined in the rule (sin first, then cos). So I made the operations `+` and `*` commutative in rules.
+In the first case, it differs from the one defined in the rule (sin first, then cos). So I made the operations `+` and `*` commutative in rules.
 
 ### Negative Exponent Support
-Previously, a rule like `(~x)^(~m)` didn't match an expression like `1/x^3` with `~m=-3`, and this was crucial for the correct functioning of my package. So I changed this behavior, and now exponents can match divisions using a negative value as the exponent. This was trickier than it seems, because a division in SymbolicUtils can be represented in many ways:  `(1/...)^(...))`, `1/(...)^(...)`, `1/(...)`, `(...)/(...)` and in fact in some rare cases this is still not working properly (read neim problem section below).
+Previously, a rule like `(~x)^(~m)` didn't match an expression like `1/x^3` with `~m=-3`, and this was crucial for the correct functioning of my package. So I changed this behavior, and now exponents can match divisions using a negative value as the exponent. This was trickier than it seems, because a negative power in SymbolicUtils can be represented in many ways:  `(1/...)^(...))`, `1/(...)^(...)`, `1/(...)`, `(...)/(...)` and in fact in some rare cases this is still not working properly (read neim problem section below).
 
 ### Other Minor Enhancements
 
@@ -300,7 +300,7 @@ I did also some minor stuff in two other julia repo:
 
 # What's left to do
 The problems holding back the most number of expressions to be integrated are:
-- **rules not translated**: As described above translating rules is not that fast, while it can be automated in some parts, the translation of the utlility functions cannot be automated and in general one has to test if rules get applied correctly. The rules not yet translated are the ones involving mainly tirgonometric functions, hyperbolic functions and specia functions. For a general introduction on how to translate rue, there is the [Contributing](https://github.com/Bumblebee00/SymbolicIntegration.jl?tab=readme-ov-file#contributing) section of the readme.
+- **rules not translated**: As described above translating rules is not that fast, while it can be automated in some parts, the translation of the utlility functions cannot be automated and in general one has to test if rules get applied correctly. The rules not yet translated are the ones involving mainly tirgonometric functions, hyperbolic functions and special functions. For a general introduction on how to translate rue, there is the [Contributing](https://github.com/Bumblebee00/SymbolicIntegration.jl?tab=readme-ov-file#contributing) section of the readme.
 - **@rule macro**: While I improved it, there are still some problems in the rule macro. The two biggest are:
 - - **neim problem**: a rule like `(~a + ~b*~x)^(~m)*(~c + ~d*~x)^(~n)` doesnt match the expression `(1+2x)^2/(3+4x)^2` with `~n=-2`. For more info you can read [the issue](https://github.com/JuliaSymbolics/SymbolicUtils.jl/issues/777) or see this [WIP pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/778) in which i try to implement a solution.
 - - **oooomm problem**: a rule can match an expression in more than one way, but, for how rules are implemented currently, only one is returned and it might be the wrong one. For more detail read [the issue](https://github.com/JuliaSymbolics/SymbolicUtils.jl/issues/776) and see this [WIP pr](https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/772) in which i try to implement a solution.
