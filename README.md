@@ -1,3 +1,6 @@
+> [!WARNING]
+> this repo is no more mantained, the rule based integration code has been moved to https://github.com/JuliaSymbolics/SymbolicIntegration.jl
+
 # SymbolicIntegration
 
 [![Build Status](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Bumblebee00/SymbolicIntegration.jl/actions/workflows/CI.yml?query=branch%3Amain)
